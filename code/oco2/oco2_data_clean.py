@@ -7,16 +7,28 @@ import matplotlib.pyplot as plt
 import datetime
 import cartopy.crs as ccrs
 
-# Reading a single granule URL:
-ds_xr = xr.open_dataset("H:/beavers_wildfire/oco2/raw/...")
+# List all .nc files in H:/beavers_wildfire/oco2/raw
 
 
-pd_df = pd.DataFrame(columns = ["latitude", "longitude", "date_time", "xco2", "xco2_quality_flag"])
+# Function:
+#   Reads in single day's file and converts it to dataframe, 
+#   Trim to a bounding box
+#   Return as pandas dataframe object to environment
 
-pd_df["xco2"] = ds_xr["xco2"][:]
-pd_df["latitude"] = ds_xr["latitude"][:]
-pd_df["longitude"] = ds_xr["longitude"][:]
-pd_df["date_time"] = ds_xr["time"][:]
-pd_df["xco2_quality_flag"] = ds_xr["xco2_quality_flag"][:]
 
-pd_df["hour"] = pd.DatetimeIndex(pd_df["date_time"]).hour
+# Apply function to all oco2 files in H:/.../oco2/raw
+# Append each month's files? If this doesn't create a huge file, I'd support it
+#   Otherwise, keep at the daily level and save as parquet files in H:/.../oco2/intermediate/
+
+oco2_nc4 = xr.open_dataset("H:/beavers_wildfire/oco2/raw/...")
+
+
+oco2_df = pd.DataFrame(columns = ["latitude", "longitude", "date_time", "xco2", "xco2_quality_flag"])
+
+oco2_df["xco2"] = oco2_nc4["xco2"][:]
+oco2_df["latitude"] = oco2_nc4["latitude"][:]
+oco2_df["longitude"] = oco2_nc4["longitude"][:]
+oco2_df["date_time"] = oco2_nc4["time"][:]
+oco2_df["xco2_quality_flag"] = oco2_nc4["xco2_quality_flag"][:]
+
+oco2_df["hour"] = pd.DatetimeIndex(oco2_df["date_time"]).hour

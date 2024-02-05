@@ -9,7 +9,7 @@ def oco2_month_process(path, year, month):
 
     ym_glob_str = f"oco2_LtCO2_{str(year)[2:4]}{str(month)}*.nc4"
 
-    # List all .nc files in H:/beavers_wildfire/oco2/raw 
+    # List all .nc files from the specified year-month in H:/beavers_wildfire/oco2/raw 
     oco2_raw_wildcard = os.path.join(path, ym_glob_str)
 
     files_oco2_raw_nc_ym = glob.glob(oco2_raw_wildcard)

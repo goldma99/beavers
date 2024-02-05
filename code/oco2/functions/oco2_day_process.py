@@ -47,7 +47,7 @@ def oco2_day_trim(data: pd.DataFrame):
     oco2_trimmed = oco2_geo_trimmed.drop(columns="geometry")
 
     # Check if there were any obs in bounding box
-    nrow, _ = oco2_geo_trimmed.shape
+    nrow = oco2_geo_trimmed.shape[0]
 
     if nrow == 0:
         print("No data in day, moving on")

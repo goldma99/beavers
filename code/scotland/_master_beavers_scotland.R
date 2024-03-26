@@ -18,8 +18,14 @@ SOURCE_SCRIPTS <- FALSE
 ## Load packages ====
 library(tidyverse)
 
+library(sf)
+
 library(glue)
 library(fs)
+
+library(igraph)
+library(tidygraph)
+library(ggraph)
 
 ## File system paths ====
 path <- "C:/Users/mGold/Desktop/beavers"
@@ -29,7 +35,11 @@ path_code_scotland <- file.path(path_code, "scotland")
 
 path_data <- file.path("H:/")
 path_data_scotland <- file.path(path_data, "beavers_scotland")
-path_data_scotland_survey <- file.path(path_data_scotland, "beaver-scotland-survey")
+path_data_scotland_survey <- file.path(path_data_scotland, "beaver-survey", "beaver-scotland-survey")
+
+path_data_scotland_river <- file.path(path_data_scotland, "river-network")
+path_data_scotland_parish <- file.path(path_data_scotland, "ag-parishes")
+
 
 ## Load font ====
 

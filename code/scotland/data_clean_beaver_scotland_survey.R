@@ -18,7 +18,6 @@ library(sf)
 ## File system paths ====
 
 # Read in data ====================================
-dir_ls(path_data_scotland_survey)
 
 scotland_survey <-
   path_data_scotland_survey %>%
@@ -39,9 +38,15 @@ scotland_survey_sf <-
   st_as_sf(
     coords = c("longitude_wgs84", "latitude_wgs84"),
     crs = 4326
-  )
+    ) %>%
+  st_transform(27700)
 
 # Analysis ========================================
+
+survey_bbox <-
+  scotland_survey_sf %>%
+  st_bbox() %>%
+  st_as_sfc()
 
 ggplot() +
   geom_sf(data = scotland_survey_sf, aes(color = factor(start_date_year))) +
@@ -50,3 +55,6 @@ ggplot() +
 
 
 # Output ==========================================
+
+
+

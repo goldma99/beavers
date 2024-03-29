@@ -20,6 +20,8 @@ library(tidyverse)
 
 library(sf)
 
+library(arrow)
+
 library(glue)
 library(fs)
 
@@ -39,6 +41,9 @@ path_data_scotland_survey <- file.path(path_data_scotland, "beaver-survey", "bea
 
 path_data_scotland_river <- file.path(path_data_scotland, "river-network")
 path_data_scotland_parish <- file.path(path_data_scotland, "ag-parishes")
+
+path_data_clean <- file.path(path, "data", "data_clean")
+path_data_clean_beaver <- file.path(path_data_clean, "beaver_survey")
 
 
 ## Load font ====

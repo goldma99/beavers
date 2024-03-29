@@ -39,7 +39,10 @@ scotland_survey_sf <-
     coords = c("longitude_wgs84", "latitude_wgs84"),
     crs = 4326
     ) %>%
-  st_transform(27700)
+  st_transform(27700) %>%
+  mutate(latitude  = st_coordinates(.)[,"Y"],
+         longitude = st_coordinates(.)[,"X"]) %>%
+  st_drop_geometry()
 
 # Analysis ========================================
 
@@ -56,5 +59,11 @@ ggplot() +
 
 # Output ==========================================
 
+path_data_scotland_survey_clean <-
+  path_data_clean_beaver %>%
+  file.path("beaver_survey.pqt")
 
+scotland_survey_sf %>%
+  write_parquet(path_data_scotland_survey_clean)
 
+st_delete(path_data_scotland_survey_clean)

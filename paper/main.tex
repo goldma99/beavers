@@ -1,0 +1,109 @@
+\documentclass[11pt, english, letterpaper]{article}
+\input{paper/preamble.tex}
+
+\begin{document}
+\justifying
+
+\title{\vspace{-2em}\textsc{Title: \\ Subtitle}\thanks{Acknowledgments: }}
+% People to recognize:
+% Eyal Frank, Tai Lohrer
+
+\author[1]{\small Miriam Gold}
+
+\affil[1]{\footnotesize Energy Policy Institute at Chicago, University of Chicago}
+\date{DATE}
+\maketitle
+
+\begin{center}
+\vspace{-3em}
+\textbf{Preliminary and incomplete! Do not cite without authors' permission}
+\end{center}
+
+\begin{abstract}
+    \singlespacing 
+    There is a lot of focus on wildlife reintroductions. As population increases and as global warming alters habitat ranges, people are living closer to wildlife. At the same time, much of human society and industry was formed in concert with the extirpation of wildlife from human spaces. We need good estimates of the impact wildlife living in close proximity to humans. Beavers, which were driven extinct in the UK during a period of rapid agricultural and industrial expansion, have returned illegally. There is much concern about them harming agricultural operations, by flooding cropland, grazing on crops, burrowing into floodbanks and collapsing fields, and cutting down valuable timber. In Scotland, many farmers view the reintroduction of beavers as ``bigger than Brexit.'' Using data from comprehensive surveys conducted during a period of rapid beaver territory expansion, I estimate the impact of beaver presence on agricultural functioning. I find \textcolor{red}{X} impact on output, \textcolor{red}{Y} on crop planting, and \textcolor{red}{Z} impact on labor hours. This result has implications for both broader beaver reintroduction and human-wildlife cohabitation. 
+\end{abstract}
+
+\newpage 
+
+% \input{sections/quote.tex}
+
+\vspace{-5mm} \section{Introduction}
+\label{sec:intro}
+\input{sections/introduction.tex}
+
+% Background
+% \section{Background}
+% \label{sec:background}
+% \input{sections/background.tex}
+
+% % Data
+% \section{Data}
+% \label{sec:data}
+% \input{sections/data.tex}
+
+% % Zero Stage: Food emergencies and locust swarms 
+% \section{Stage Zero}
+% \label{sec:stage_zero}
+% \input{sections/stage_zero_food_security.tex}
+
+% % Empirical Strategy 
+% \section{Methods}
+% \label{sec:methods}
+% \input{sections/methods.tex}
+
+% % Results 
+% \section{Results}
+% \label{sec:results}
+% \input{sections/results.tex}
+
+% \section{Discussion}
+% \label{sec:discussion}
+% \input{sections/discussion.tex}
+
+
+\printbibliography
+
+% Appendices 
+\setcounter{page}{1}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\setcounter{section}{0}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\renewcommand{\thefigure}{\thesection\arabic{figure}}
+\renewcommand{\thepage}{\thesection\arabic{page}}
+\renewcommand\thesection{\Alph{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\newpage
+\section*{Appendix}
+\section{Additional Results}
+\input{appendix/additional_results.tex}
+
+\setcounter{page}{1}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\renewcommand{\thefigure}{\thesection\arabic{figure}}
+\renewcommand{\thepage}{\thesection\arabic{page}}
+\renewcommand\thesection{\Alph{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\newpage
+\section{Data Construction}
+\input{appendix/additional_data.tex} 
+
+
+\begin{comment}
+\setcounter{page}{1}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\renewcommand{\thefigure}{\thesection\arabic{figure}}
+\renewcommand{\thepage}{\thesection\arabic{page}}
+\renewcommand\thesection{\Alph{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\newpage
+\section{Supplementary Background on Locusts' Biology}
+\input{appendix/additional_background}
+\end{comment}
+
+\end{document}

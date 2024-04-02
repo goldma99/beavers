@@ -34,6 +34,8 @@ path <- "C:/Users/mGold/Desktop/beavers"
 
 path_code <- file.path(path, "code")
 path_code_scotland <- file.path(path_code, "scotland")
+path_code_scotland_fn <- file.path(path_code_scotland, "functions")
+path_code_scotland_fn_plot <- file.path(path_code_scotland_fn, "plotting_functions")
 
 path_data <- file.path("H:/")
 path_data_scotland <- file.path(path_data, "beavers_scotland")
@@ -44,7 +46,12 @@ path_data_scotland_parish <- file.path(path_data_scotland, "ag-parishes")
 
 path_data_clean <- file.path(path, "data", "data_clean")
 path_data_clean_beaver <- file.path(path_data_clean, "beaver_survey")
+path_data_clean_parish <- file.path(path_data_clean, "ag_parishes")
 
+path_output <- file.path(path, "output")
+path_figures <- file.path(path_output, "figures")
+path_tables <- file.path(path_output, "tables")
+path_reports <- file.path(path_output, "reports")
 
 ## Load font ====
 
@@ -65,7 +72,6 @@ showtext_opts(dpi = 300)
 # Reset working directory to top level
 setwd(path)
 
-
 ## Source all custom helper functions ====
 source_dir <- function(dir, deprecated_prefix = "ZZZ") {
 
@@ -80,8 +86,7 @@ source_dir <- function(dir, deprecated_prefix = "ZZZ") {
   fs::dir_tree(dir)
 }
 
-path_code_scotland %>%
-  file.path("functions") %>%
+path_code_scotland_fn %>%
   source_dir()
 
 # Source individual scripts =====================

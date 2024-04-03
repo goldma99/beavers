@@ -28,73 +28,48 @@ library(fs)
 library(igraph)
 library(tidygraph)
 library(ggraph)
+library(showtext)
 
 ## File system paths ====
 path <- "C:/Users/mGold/Desktop/beavers"
 
 path_code <- file.path(path, "code")
-path_code_scotland <- file.path(path_code, "scotland")
-path_code_scotland_fn <- file.path(path_code_scotland, "functions")
-path_code_scotland_fn_plot <- file.path(path_code_scotland_fn, "plotting_functions")
+
+path_code_scotland                    <- file.path(path_code, "scotland")
+path_code_scotland_functions          <- file.path(path_code_scotland, "functions")
+path_code_scotland_data_clean         <- file.path(path_code_scotland, "data_clean")
+path_code_scotland_data_construct     <- file.path(path_code_scotland, "data_construct")
+path_code_scotland_generate_estimates <- file.path(path_code_scotland, "generate_estimates")
+path_code_scotland_generate_figures   <- file.path(path_code_scotland, "generate_figures")
+path_code_scotland_generate_tables    <- file.path(path_code_scotland, "generate_tables")
+path_code_scotland_generate_reports   <- file.path(path_code_scotland, "generate_reports")
 
 path_data <- file.path("H:/")
-path_data_scotland <- file.path(path_data, "beavers_scotland")
-path_data_scotland_survey <- file.path(path_data_scotland, "beaver-survey", "beaver-scotland-survey")
 
-path_data_scotland_river <- file.path(path_data_scotland, "river-network")
+path_data_scotland        <- file.path(path_data, "beavers_scotland")
+path_data_scotland_survey <- file.path(path_data_scotland, "beaver-survey", "beaver-scotland-survey")
+path_data_scotland_river  <- file.path(path_data_scotland, "river-network")
 path_data_scotland_parish <- file.path(path_data_scotland, "ag-parishes")
 
-path_data_clean <- file.path(path, "data", "data_clean")
+path_data_clean        <- file.path(path, "data", "data_clean")
 path_data_clean_beaver <- file.path(path_data_clean, "beaver_survey")
 path_data_clean_parish <- file.path(path_data_clean, "ag_parishes")
 
-path_output <- file.path(path, "output")
-path_figures <- file.path(path_output, "figures")
-path_tables <- file.path(path_output, "tables")
-path_reports <- file.path(path_output, "reports")
+path_output         <- file.path(path, "output")
+path_output_figures <- file.path(path_output, "figures")
+path_output_tables  <- file.path(path_output, "tables")
+path_output_reports <- file.path(path_output, "reports")
 
-## Load font ====
+## Source general use custom functions
+path_code_scotland_functions %>%
+  dir_ls() %>%
+  walk(source)
 
-# Set up custom font (Computer Modern) for plots
-library(showtext)
-## Font (Computer Modern) for plots ====
-wd <- setwd(tempdir())
-
-ft.url <- "https://www.fontsquirrel.com/fonts/download/computer-modern/computer-modern.zip"
-download.file(ft.url, basename(ft.url))
-if (!file.exists("cmunrm.ttf")) unzip(basename(ft.url))
-
-font_add("cmr", "cmunrm.ttf")
-font_add("cmss", "cmunss.ttf")
-
-showtext_auto()
-showtext_opts(dpi = 300)
-# Reset working directory to top level
-setwd(path)
-
-## Source all custom helper functions ====
-source_dir <- function(dir, deprecated_prefix = "ZZZ") {
-
-  str_to_ignore <- glue("^[^{deprecated_prefix}]")
-  regex_to_ignore <- regex(pattern = unclass(str_to_ignore))
-  
-  dir_files <- fs::dir_ls(dir, recurse = TRUE, regexp = regex_to_ignore, type = "file")
-  
-  walk(dir_files, source)
-  
-  message("Sourced functions contained in:")
-  fs::dir_tree(dir)
-}
-
-path_code_scotland_fn %>%
-  source_dir()
-
-# Source individual scripts =====================
+# Run entire pipeline =====================
 
 if (SOURCE_SCRIPTS) {
   
-  ## Clean NatureScot repeated beaver surveys =============== 
-  path_code_scotland %>%
-    file.path("data_clean_beaver_scotland_survey.R") %>%
+  path_code_scotland_data_clean %>%
+    file.path("_master_data_clean.R") %>%
     source()
 }

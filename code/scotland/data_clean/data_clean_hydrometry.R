@@ -33,15 +33,8 @@ ag_parish_in_survey <-
 # Clean data ======================================
 
 # 1. Determine the breadth and spatial density of monitoring stations in the Tayside region
-url <- "https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices&datasource=0&request=getStationList"
 
-resp <- GET(url)
-
-hydrometry_stations <-
-  rawToChar(resp$content) %>%
-  read_html() %>%
-  html_table(header = 1) %>%
-  pluck(1)
+hydrometry_stations <- hydrometry_get("station")
 
 hydrometry_stations_sf <-
   hydrometry_stations %>%
@@ -76,20 +69,27 @@ hydrometry_quality_codes <-
 ##' River Level (stage) in meters: "level"/"SG"
 ##' Monthly mean and max (Month.Max, Month.Mean)
 
-level_station_url <- "https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices&datasource=0&request=getstationlist&stationparameter_name=Level&format=csv"
-
-level_station_resp <- GET(level_station_url)
-
 hydrometry_stations_with_level <-
-  level_station_resp %>%
-  content(as = "text") %>%
-  read_delim() %>%
+  hydrometry_get("station", stationparameter_name = "Level") %>%
   distinct()
 
 stations_with_level_in_survey <-
   hydrometry_stations_in_survey %>%
   select(station_name) %>%
-  inner_join(hydrometry_stations_with_level, by = c("station_name"))
+  left_join(hydrometry_stations_with_level, by = c("station_name")) %>%
+  mutate(has_level_ts = !is.na(station_no))
+
+ggplot() +
+  geom_sf(data = ag_parish_in_survey, fill = "grey90", color = "white") +
+  geom_sf(data = filter(stations_with_level_in_survey, has_level_ts),
+          aes(color = has_level_ts)) +
+  scale_color_manual(
+    values = c(
+      `TRUE` = "red",
+      `FALSE` = "grey70"
+    )
+  ) +
+  theme_minimal()
 
 aberlour_level_ts <-
   hydrometry_get("timeseries", station_name = "Aberlour", parametertype_name = "S",

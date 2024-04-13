@@ -13,22 +13,27 @@
 
 rm(list = ls())
 
-SOURCE_SCRIPTS <- FALSE
+SOURCE_SCRIPTS <- TRUE
 
 ## Load packages ====
 library(tidyverse)
+library(magrittr)
+library(showtext)
+library(glue)
+library(fs)
+library(janitor)
+library(lubridate)
+library(httr2)
+library(rvest)
 
 library(sf)
 
 library(arrow)
 
-library(glue)
-library(fs)
-
 library(igraph)
 library(tidygraph)
 library(ggraph)
-library(showtext)
+
 
 ## File system paths ====
 path <- "C:/Users/mGold/Desktop/beavers"
@@ -54,11 +59,15 @@ path_data_scotland_parish <- file.path(path_data_scotland, "ag-parishes")
 path_data_clean        <- file.path(path, "data", "data_clean")
 path_data_clean_beaver <- file.path(path_data_clean, "beaver_survey")
 path_data_clean_parish <- file.path(path_data_clean, "ag_parishes")
+path_data_clean_hydrometry <- file.path(path_data_clean, "hydrometry")
 
 path_output         <- file.path(path, "output")
+
 path_output_figures <- file.path(path_output, "figures")
 path_output_tables  <- file.path(path_output, "tables")
 path_output_reports <- file.path(path_output, "reports")
+
+setwd(path)
 
 ## Source general use custom functions
 path_code_scotland_functions %>%

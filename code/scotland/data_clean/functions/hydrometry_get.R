@@ -5,9 +5,20 @@ hydrometry_get <- function(
   
   request   <- match.arg(request)
   
-  hydrometry_build_req(request, ...) %>%
+  hydrometry_req <- hydrometry_build_req(request, ...) 
+
+  resp_data <-
+    hydrometry_req %>%
     req_perform() %>%
     hydrometry_parse()
+  
+  message("Received: ", hydrometry_req$url)
+  
+  if (request == "timeseries_values") {
+    timeseries_values_clean(resp_data)
+  } else {
+    resp_data
+  }
 
   }
 
@@ -51,4 +62,13 @@ hydrometry_parse <- function(resp) {
     httr2::resp_body_html() %>%
     rvest::html_table(header = 1) %>%
     purrr::pluck(1)
+}
+
+timeseries_values_clean <- function(resp_data) {
+  resp_data %>% 
+    set_names(c("timestamp", "value", "quality_code")) %>%
+    slice(4:n()) %>% 
+    mutate(
+      ts_id = names(resp_data)[2]
+    )
 }

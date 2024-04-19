@@ -21,6 +21,11 @@ path_code_scotland_data_clean %>%
 
 if (SOURCE_SCRIPTS) {
   
+  ## Clean river network data ==================
+  path_code_scotland_data_clean %>%
+    file.path("data_clean_river_network.R") %>%
+    source()
+  
   ## Import and clean SEPA Hydrometry timeseries data =============== 
   path_code_scotland_data_clean %>%
     file.path("data_clean_hydrometry.R") %>%

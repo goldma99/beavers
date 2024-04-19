@@ -10,13 +10,6 @@
 
 # Set up ==========================================
 
-## Load packages ====
-library(janitor)
-library(lubridate)
-library(sf)
-
-## File system paths ====
-
 # Read in data ====================================
 
 scotland_survey <-
@@ -34,7 +27,7 @@ scotland_survey_clean <-
   filter(data_provider == "NatureScot") %>%
   mutate(
     # Assign an "effective" survey year (ie, the year that the survey may be 
-    # attributable to, to avoid confusing split year aggregated when presenting 
+    # attributable to, to avoid confusing split year aggregation when presenting 
     # expansion figures)
     effective_survey_year = case_when(
       str_detect(dataset_name, "2012") ~ 2012,
@@ -49,12 +42,20 @@ scotland_survey_clean <-
     crs = 4326
     ) %>%
   st_transform(27700) %>%
+  
+  # I drop geometry here, because this dataset kept giving me all sorts of 
+  # errors when attempting to save it as .shp, so instead I'm saving it as a 
+  # .pqt, with coordinate columns
   mutate(latitude  = st_coordinates(.)[,"Y"],
          longitude = st_coordinates(.)[,"X"]) %>%
   st_drop_geometry()
 
 survey_bbox <-
-  scotland_survey_sf %>%
+  scotland_survey_clean %>%
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 27700
+  ) %>%
   st_bbox() %>%
   st_as_sfc()
 

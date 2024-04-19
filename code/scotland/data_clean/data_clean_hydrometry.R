@@ -53,10 +53,6 @@ hydrometry_stations_in_survey <-
   st_transform(crs = 27700) %>%
   st_filter(ag_parish_in_survey) 
 
-# ggplot() +
-#   geom_sf(data = ag_parish_in_survey) +
-#   geom_sf(data = hydrometry_stations_in_survey, color = "red")
-
 # 2. Determine what measurement time series are available during our period of interest (~1990 -> 2020)
 
 #' @Data-Structure
@@ -84,18 +80,6 @@ stations_with_level_in_survey <-
     ) %>%
   st_transform(27700) %>%
   st_filter(ag_parish_in_survey)
-
-# ggplot() +
-#   geom_sf(data = ag_parish_in_survey, fill = "grey90", color = NA) +
-#   geom_sf(data = stations_with_level_in_survey,
-#           aes(color = "Hydrometry Stations")) +
-#   scale_color_manual(
-#     values = c("Hydrometry Stations" = "red")
-#   ) +
-#   theme_minimal() +
-#   theme(
-#     legend.title = element_blank()
-#   )
 
 survey_stations_level_ts_metadata <-
   expand_grid(

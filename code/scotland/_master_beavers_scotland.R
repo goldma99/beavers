@@ -13,7 +13,7 @@
 
 rm(list = ls())
 
-SOURCE_SCRIPTS <- TRUE
+SOURCE_SCRIPTS <- FALSE
 
 ## Load packages ====
 library(tidyverse)
@@ -33,7 +33,6 @@ library(arrow)
 library(igraph)
 library(tidygraph)
 library(ggraph)
-
 
 ## File system paths ====
 path <- "C:/Users/mGold/Desktop/beavers"
@@ -56,10 +55,11 @@ path_data_scotland_survey <- file.path(path_data_scotland, "beaver-survey", "bea
 path_data_scotland_river  <- file.path(path_data_scotland, "river-network")
 path_data_scotland_parish <- file.path(path_data_scotland, "ag-parishes")
 
-path_data_clean        <- file.path(path, "data", "data_clean")
-path_data_clean_beaver <- file.path(path_data_clean, "beaver_survey")
-path_data_clean_parish <- file.path(path_data_clean, "ag_parishes")
+path_data_clean            <- file.path(path, "data", "data_clean")
+path_data_clean_beaver     <- file.path(path_data_clean, "beaver_survey")
+path_data_clean_parish     <- file.path(path_data_clean, "ag_parishes")
 path_data_clean_hydrometry <- file.path(path_data_clean, "hydrometry")
+path_data_clean_river      <- file.path(path_data_clean, "river_network")
 
 path_output         <- file.path(path, "output")
 

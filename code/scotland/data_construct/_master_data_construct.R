@@ -26,4 +26,9 @@ if (SOURCE_SCRIPTS) {
     file.path("data_construct_beaver_expansion.R") %>%
     source()
   
+  ## Construct balanced beaver expansion panel ======================
+  path_code_scotland_data_clean %>%
+    file.path("data_construct_river_grid.R") %>%
+    source()
+  
 }

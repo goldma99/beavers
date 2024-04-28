@@ -32,16 +32,27 @@ ag_parish_in_survey <-
 
 # Clean data ======================================
 
-ag_parish_tessel <-
+river_grid_sf <-
+  ## Tessellate the Agricultural parishes...
   st_make_grid(ag_parish_in_survey, cellsize = 1000) %>%
   st_as_sf() %>%
-  st_filter(river_link_sf)
+  ## Then 
+  st_filter(river_link_sf) %>%
+  rowid_to_column(var = "cell_id")
+
+st_geometry(river_grid_sf) <- "geometry"
 
 ggplot() +
   geom_sf(data = ag_parish_in_survey, fill = "grey90", color = NA) +
-  geom_sf(data = ag_parish_tessel, fill = NA, color = "black") +
-  geom_sf(data = river_link_sf, color = "blue")
+  geom_sf(data = river_grid_sf, fill = NA, color = "#CD5B45") +
+  geom_sf(data = river_link_sf, color = "navyblue") +
+  theme_minimal()
 
 # Analysis ========================================
 
 # Output ==========================================
+river_grid_sf %>%
+  write_sf(
+    file.path(path_data_clean_river, "river_grid", "river_grid.shp")
+  )
+

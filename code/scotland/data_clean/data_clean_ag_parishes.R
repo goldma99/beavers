@@ -32,12 +32,10 @@ ag_parish_in_survey <-
   st_filter(beaver_survey_bbox)
 
 # Output ==========================================
+
 path_data_clean_parish_in_survey <-
   path_data_clean_parish %>%
-  file.path("ag_parish_in_survey.shp")
+  file.path("ag_parish_in_survey", "ag_parish_in_survey.shp")
 
 ag_parish_in_survey %>%
   write_sf(path_data_clean_parish_in_survey)
-
-path_data_clean_parish_in_survey %>%
-  read_sf()

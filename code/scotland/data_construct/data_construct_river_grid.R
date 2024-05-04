@@ -42,11 +42,12 @@ river_grid_sf <-
 
 st_geometry(river_grid_sf) <- "geometry"
 
-ggplot() +
-  geom_sf(data = ag_parish_in_survey, fill = "grey90", color = NA) +
-  geom_sf(data = river_grid_sf, fill = NA, color = "#CD5B45") +
-  geom_sf(data = river_link_sf, color = "navyblue") +
-  theme_minimal()
+#' @Use-later
+# ggplot() +
+#   geom_sf(data = ag_parish_in_survey, fill = "grey90", color = NA) +
+#   geom_sf(data = river_grid_sf, fill = NA, color = "#CD5B45") +
+#   geom_sf(data = river_link_sf, color = "navyblue") +
+#   theme_minimal()
 
 # Analysis ========================================
 

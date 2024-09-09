@@ -36,7 +36,7 @@ river_grid_sf <-
   ## Tessellate the Agricultural parishes...
   st_make_grid(ag_parish_in_survey, cellsize = 1000) %>%
   st_as_sf() %>%
-  ## Then 
+  ## ...then select those that overlap with rivers 
   st_filter(river_link_sf) %>%
   rowid_to_column(var = "cell_id")
 

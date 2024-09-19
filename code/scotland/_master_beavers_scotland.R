@@ -26,6 +26,8 @@ library(lubridate)
 library(httr2)
 library(rvest)
 
+library(data.table)
+
 library(sf)
 library(terra)
 

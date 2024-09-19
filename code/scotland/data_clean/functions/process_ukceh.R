@@ -4,7 +4,7 @@ process_ukceh <- function(path) {
   year     <- str_extract(path, "Land Cover Map (\\d{4}) ", group = 1)
   out_path <- file.path(path_data_clean_lc, glue("ukceh_lcm_1km_{year}.tif"))
   
-  message("Trying: ", year, "\n")
+  message("Trying: ", year)
   
   rast_ukceh <- read_ukceh(path)
   rast_agg   <- agg_ukceh(rast_ukceh)

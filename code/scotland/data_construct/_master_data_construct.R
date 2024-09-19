@@ -3,7 +3,7 @@
 #' Description: All scripts pertaining to constructing custom datasets  
 #' Author: Miriam Gold    
 #' Date: 3 April 2024
-#' Last revised: 19 April 2024, mag
+#' Last revised: 17 Sept 2024, mag
 #' Notes: notes
 #' 
 # ---------------------------------------------------------------------------- #
@@ -26,9 +26,14 @@ if (SOURCE_SCRIPTS) {
     file.path("data_construct_beaver_expansion.R") %>%
     source()
   
-  ## Construct balanced beaver expansion panel ======================
+  ## Construct 1km^2 river grid cells ===============================
   path_code_scotland_data_clean %>%
     file.path("data_construct_river_grid.R") %>%
+    source()
+
+  ## Aggregate agricultural land shares to river grid cells=====================
+  path_code_scotland_data_clean %>%
+    file.path("data_construct_ag_land_share.R") %>%
     source()
   
 }

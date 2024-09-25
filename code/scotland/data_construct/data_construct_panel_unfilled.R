@@ -123,60 +123,6 @@ river_year_panel_all_data %>%
     file.path(path_data_clean, "treatment", "river_grid_year_panel_unfilled.pqt")
   )
 
-river_year_panel_all_data[,
-                          ag_share_fill := approx(year, ag_share, n = .N)$y,
-                          by = river_id
-                          ][,
-                            ag_share_fill := pmax(ag_share_fill, 0)
-                            ][,
-                              ag_share_fill := pmin(ag_share_fill, 1)
-                              ][,
-                                is_ag_share_fill := if_else(is.na(ag_share), "Interpolated", "Data")
-                              ]
-
-plot_ag_share_fill <- function(data, id) {
-  
-  message("Plotting river grid cell ", id)
-  
-  data[river_id == id] %>%
-    
-    ggplot(
-      aes(year, ag_share_fill, shape = is_ag_share_fill, color = is_ag_share_fill)
-    ) +
-    
-    geom_point(size = 3) +
-    
-    scale_color_manual(values = c(Interpolated = "#90A4AE", Data = "#D84315")) +
-    scale_shape_manual(values = c(Interpolated = 16       , Data = 17)) +
-    scale_x_continuous(breaks = seq(1990, 2022, by = 1)) +
-    scale_y_continuous(limits = c(0, 1), labels = scales::label_percent()) +
-    
-    labs(
-      x = NULL,
-      y = NULL,
-      subtitle = "% Land in Agricultural Use",
-      color = NULL,
-      shape = NULL
-    ) +
-    
-    theme_classic() +
-    theme(
-      text = element_text(size = 19),
-      axis.text.x = element_text(size = 12, angle = 30, hjust = 1)
-    )
-  
-  ggsave(filename = glue("ag_share_fill_id{id}.png"),
-         path = file.path(path_output_figures, "ag_share_fill"),
-         width = 12, height = 7, units = "in")
-}
-
-river_year_panel_all_data %>%
-  distinct(river_id) %>%
-  #slice(1:3) %>%
-  pull() %>%
-  walk(~plot_ag_share_fill(river_year_panel_all_data, .x))
-
-
 #' @EDA
 #' # Only covers 311 river grid cells. 
 #' #' @TODO: consider changing this join from intersects to within a certain 

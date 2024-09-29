@@ -3,7 +3,7 @@
 #' Description: Generate and save plots concerning beaver expansion in Scotland
 #' Author: Miriam Gold
 #' Date: 1 April 2024
-#' Last revised: date, mag
+#' Last revised: 28 Sept 2024, mag
 #' Notes: notes
 #' 
 # ---------------------------------------------------------------------------- #
@@ -36,14 +36,17 @@ if (READ_DATA) {
 }
 # Plot generation ========================================
 
-source_dir(path_code_scotland_fn_plot)
+## Make sure plotting functions are up-to-date ====
+path_code_scotland_generate_figures %>%
+  file.path("plotting_functions") %>%
+  source_dir()
 
 ## Collect figure generation elements, where each row is a figure and each
 ## column is an argument that will be passed to ggsave_wrapper() 
 beavers_fig_args <-
   tribble(
     ~plot_fn, ~filename, ~path, ~width, ~height,
-    plot_beaver_parish_expansion, "beaver_parish_expansion.pdf", path_figures, 12, 7,
+    plot_beaver_parish_expansion, "beaver_parish_expansion.pdf", path_output_figures, 12, 7,
     ) 
 
 ## Generate and save plots 

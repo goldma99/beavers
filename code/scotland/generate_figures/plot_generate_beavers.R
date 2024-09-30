@@ -31,8 +31,21 @@ if (READ_DATA) {
   ## Agricultural parishes ==============
   ag_parish_in_survey <- 
     path_data_clean_parish %>%
-    file.path("ag_parish_in_survey.shp") %>%
+    file.path("ag_parish_in_survey", "ag_parish_in_survey.shp") %>%
     read_sf()
+  
+  ## River grid shp
+  river_grid <-
+    path_data_clean_river %>%
+    file.path("river_grid", "river_grid.shp") %>%
+    read_sf()
+  
+  ## Panel
+  river_grid_year_panel_filled <-
+    path_data_clean %>%
+    file.path("treatment", "river_grid_year_panel_filled.pqt") %>%
+    read_parquet() %>%
+    setDT()
 }
 # Plot generation ========================================
 
@@ -46,10 +59,11 @@ path_code_scotland_generate_figures %>%
 beavers_fig_args <-
   tribble(
     ~plot_fn, ~filename, ~path, ~width, ~height,
-    plot_beaver_parish_expansion, "beaver_parish_expansion.pdf", path_output_figures, 12, 7,
+    #plot_beaver_parish_expansion, "beaver_parish_expansion.pdf", path_output_figures, 12, 7,
+    plot_beaver_first_year_treated, "beaver_first_year_treated.pdf", path_output_figures, 10, 7
     ) 
 
 ## Generate and save plots 
 beavers_fig_args %>%
     #slice() %>%
-    pwalk(ggsave_wrapper)
+   pwalk(ggsave_wrapper)

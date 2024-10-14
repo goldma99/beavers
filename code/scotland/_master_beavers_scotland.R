@@ -86,4 +86,9 @@ if (SOURCE_SCRIPTS) {
   path_code_scotland_data_clean %>%
     file.path("_master_data_clean.R") %>%
     source()
+  
+  
+  path_code_scotland_data_clean %>%
+    file.path("_master_data_construct.R") %>%
+    source()
 }

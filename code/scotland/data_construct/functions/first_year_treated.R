@@ -12,4 +12,5 @@ first_year_treated <-
     first_d <- min(which(x == d))
     y[first_d]
   }
-}
+  }
+

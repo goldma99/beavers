@@ -43,6 +43,12 @@ ag_share_by_river_grid_year <-
   map_dfr(read_parquet) %>%
   setDT()
 
+## Elevation and slope ============
+elevation_by_river_grid <-
+  path_data_clean %>%
+  file.path("dem", "river_grid_elevation_slope.pqt") %>%
+  read_parquet()
+
 # Clean data ======================================
 
 ## River grid ===================
@@ -64,8 +70,7 @@ beaver_by_river_grid_year <-
   count(river_id, effective_survey_year) %>%
   rename(year = effective_survey_year, beaver_count = n) %>%
   mutate(beaver_d = as.integer(beaver_count > 0)) %>%
-  setDT() %>%
-  setkey(river_id, year)
+  setDT(key = c("river_id", "year"))
 
 ## River levels =================
 
@@ -114,7 +119,8 @@ river_year_panel_all_data <-
   river_year_panel_complete %>%
   merge(ag_share_by_river_grid_year  , all = TRUE, by = c("river_id", "year")) %>%
   merge(beaver_by_river_grid_year    , all = TRUE, by = c("river_id", "year")) %>%
-  merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year"))
+  merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year")) %>%
+  merge(elevation_by_river_grid      , all = TRUE, by = "river_id")
 
 # Output ==========================================
 

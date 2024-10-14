@@ -36,18 +36,11 @@ river_grid_sf <-
   ## Tessellate the Agricultural parishes...
   st_make_grid(ag_parish_in_survey, cellsize = 1000) %>%
   st_as_sf() %>%
-  ## Then 
-  st_filter(river_link_sf) %>%
-  rowid_to_column(var = "cell_id")
-
-st_geometry(river_grid_sf) <- "geometry"
-
-#' @Use-later
-# ggplot() +
-#   geom_sf(data = ag_parish_in_survey, fill = "grey90", color = NA) +
-#   geom_sf(data = river_grid_sf, fill = NA, color = "#CD5B45") +
-#   geom_sf(data = river_link_sf, color = "navyblue") +
-#   theme_minimal()
+  ## ...then intersect with river links and mark those that overlap with rivers 
+  st_join(river_link_sf) %>%
+  st_filter(ag_parish_in_survey) %>%
+  rowid_to_column(var = "river_id") %>%
+  mutate(on_river = !is.na(link_index))
 
 # Analysis ========================================
 

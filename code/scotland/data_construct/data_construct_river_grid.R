@@ -31,17 +31,22 @@ ag_parish_in_survey <-
   read_geography()
 
 # Clean data ======================================
+river_network_grouped <-
+  river_link_sf %>%
+  summarise(link_index = 9999)
 
 river_grid_sf <-
   ## Tessellate the Agricultural parishes...
   st_make_grid(ag_parish_in_survey, cellsize = 1000) %>%
   st_as_sf() %>%
-  ## ...then intersect with river links and mark those that overlap with rivers 
-  st_join(river_link_sf) %>%
+  #rowid_to_column(var = "orig_id") %>%
   st_filter(ag_parish_in_survey) %>%
+  ## ...then intersect with river links and mark those that overlap with rivers 
+  st_join(river_network_grouped) %>%
   rowid_to_column(var = "river_id") %>%
-  mutate(on_river = !is.na(link_index))
-
+  mutate(on_river = !is.na(link_index)) %>%
+  select(!link_index)
+  
 # Analysis ========================================
 
 # Output ==========================================

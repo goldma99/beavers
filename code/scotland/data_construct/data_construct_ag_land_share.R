@@ -23,7 +23,9 @@ path_raster_year_list <-
   dir_ls(recurse = TRUE, glob = "*.tif$")
 
 # Calculate agricultural land share by river grid cell ================
-lcm_years <- c(1990, 2000, 2007, 2015, 2017:2022)
+#lcm_years <- c(1990, 2000, 2007, 2015, 2017:2022)
+
+lcm_years <- 2020:2022
 
 lcm_years %>% 
   walk(

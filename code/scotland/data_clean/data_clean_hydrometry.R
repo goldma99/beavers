@@ -23,6 +23,7 @@ library(httr2)
 library(rvest)
 library(janitor)
 library(magrittr)
+library(arrow)
 
 ## File system paths ====
 
@@ -31,7 +32,7 @@ library(magrittr)
 # Agricultural parish polygons
 ag_parish_in_survey <-
   path_data_clean_parish %>%
-  file.path("ag_parish_in_survey.shp") %>%
+  file.path("ag_parish_in_survey", "ag_parish_in_survey.shp") %>%
   read_sf()
 
 # Clean data ======================================
@@ -67,35 +68,50 @@ hydrometry_quality_codes <-
 
 ##' @Variables
 ##' River Level (stage) in meters: "level"/"SG"
+##' River flow (discharge) in m^3/s: "Q"
+##' Groundwater level 
 ##' Monthly mean and max (Month.Max, Month.Mean)
 
-stations_with_level_in_survey <-
-  hydrometry_get("station", stationparameter_name = "Level",
-                 returnfields = "station_name,station_id,parametertype_name,station_latitude,station_longitude") %>%
-  distinct() %>%
-  filter(!is.na(station_latitude)) %>%
-  st_as_sf(
-    coords = c("station_longitude", "station_latitude"),
-    crs = 4326
-    ) %>%
-  st_transform(27700) %>%
-  st_filter(ag_parish_in_survey)
-
-survey_stations_level_ts_metadata <-
+stations_with_data_in_survey <-
   expand_grid(
-    request = "timeseries",
-    station_id = paste0(stations_with_level_in_survey$station_id, collapse = ","), #stations_with_level_in_survey$station_id,
-    #parametertype_name = "S",
-    stationparameter_name = "Level",
-    ts_shortname = "HMonth.Max,HMonth.Mean",
-    returnfields = "station_name, station_no, station_id, station_latitude, station_longitude, stationparameter_name, ts_shortname, ts_id, ts_path, coverage"
+    request = "station",
+    stationparameter_name = c("Level", "Flow", "GroundwaterLevel"),
+    returnfields = "station_name,station_id,stationparameter_name,parametertype_name,station_latitude,station_longitude"
   ) %>%
     pmap(hydrometry_get) %>%
     list_rbind() %>%
-    filter(!is.na(ts_id))
+    distinct() %>%
+    filter(!is.na(station_latitude)) %>%
+    st_as_sf(
+      coords = c("station_longitude", "station_latitude"),
+      crs = 4326
+    ) %>%
+    st_transform(27700) %>%
+    st_filter(ag_parish_in_survey)
 
-survey_stations_level_ts_metadata_clean <-
-  survey_stations_level_ts_metadata %>%
+survey_stations_ts_metadata <-
+  stations_with_data_in_survey %>%
+  st_drop_geometry() %>%
+  group_by(stationparameter_name) %>%
+  summarise(
+    station_id = paste0(station_id, collapse = ",")
+  ) %>%
+  ungroup() %>%
+  mutate(
+    request = "timeseries",
+    ts_shortname = case_when(
+      stationparameter_name == "Level" ~ "HMonth.Max,HMonth.Mean",
+      stationparameter_name == "Flow" ~ "HDay.Mean,HYear.Max",
+      stationparameter_name == "GroundwaterLevel" ~ "HYear.Mean,HYear.Max"
+      ),
+    returnfields = "station_name, station_no, station_id, station_latitude, station_longitude, stationparameter_name, ts_shortname, ts_id, ts_path, coverage"
+  ) %>%
+  pmap(hydrometry_get) %>%
+  list_rbind() %>%
+  filter(!is.na(ts_id))
+
+survey_stations_ts_metadata_clean <-
+  survey_stations_ts_metadata %>%
   mutate(
     from_date = as_date(from),
     to_date = as_date(to),
@@ -108,27 +124,23 @@ survey_stations_level_ts_metadata_clean <-
 
 # 3. Determine quality of the data (i.e., do we have a close to balanced panel across all major river segments?
 
-survey_stations_level_ts_values <-
-  survey_stations_level_ts_metadata_clean %>%
-  #filter(str_detect(ts_shortname, "Mean")) %>%
+survey_stations_ts_values <-
+  survey_stations_ts_metadata_clean %>%
   mutate(request = "timeseries_values",
          returnfields = "Timestamp,Value,Quality Code") %>%
   select(request, ts_path, from, returnfields) %>%
-  #slice(1:3) %>%
   pmap(hydrometry_get) %>%
   list_rbind()
 
-survey_stations_level_ts_values_clean <-
-  
-  survey_stations_level_ts_values %>%
+survey_stations_ts_values_clean <-
+  survey_stations_ts_values %>%
   mutate(
     ts_timestamp = as_date(timestamp),
-    ts_id = ts_id
-  ) %>%
+    ) %>%
   rename(ts_value = value) %>%
   filter(!is.na(ts_timestamp)) %>%
   left_join(
-    survey_stations_level_ts_metadata_clean,
+    survey_stations_ts_metadata_clean,
     by = c("ts_id")
   ) %>%
   group_by(ts_id) %>%
@@ -139,21 +151,17 @@ survey_stations_level_ts_values_clean <-
     ts_timestamp_max = max(ts_timestamp),
     ts_timestamp_len = difftime(ts_timestamp_max, ts_timestamp_min)
   )
-
- # Output ==========================================
+ 
+# Output ==========================================
 
 ## Stations in survey area with level measurements: metadata
-path_hydrometry_ts_metadata <- 
-  path_data_clean_hydrometry %>%
-  file.path("survey_stations_level_ts_metadata.csv")
-
-survey_stations_level_ts_metadata_clean %>%
-  write_csv(path_hydrometry_ts_metadata)
+survey_stations_ts_metadata_clean %>%
+  write_csv(
+    file.path(path_data_clean_hydrometry, "survey_stations_ts_metadata.csv")
+    )
 
 ## Stations in survey area with level measurements: data values
-path_hydrometry_ts_values <-
-  path_data_clean_hydrometry %>%
-  file.path("survey_stations_level_ts_values.csv")
-
-survey_stations_level_ts_values_clean %>%
-  write_csv(path_hydrometry_ts_values)
+survey_stations_ts_values_clean %>%
+  write_parquet(
+    file.path(path_data_clean_hydrometry, "survey_stations_ts_values.parquet")
+    )

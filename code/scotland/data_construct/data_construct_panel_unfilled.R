@@ -32,8 +32,9 @@ beaver_survey <-
 ## River levels =================
 hydrometry_ts <-
   path_data_clean_hydrometry %>%
-  file.path("survey_stations_level_ts_values.csv") %>%
-  read_csv()
+  file.path("survey_stations_ts_values.parquet") %>%
+  read_parquet() %>%
+  setDT()
 
 ## Land use =====================
 ag_share_by_river_grid_year <-
@@ -81,29 +82,113 @@ hydrometry_river_join <-
   st_as_sf(crs = 4326, coords = c("station_longitude", "station_latitude")) %>%
   st_transform(27700) %>%
   st_join(river_grid_sf_clean) %>%
-  st_drop_geometry()
+  st_drop_geometry() %>%
+  setDT()
+
+hydrometry_ts_clean <-
+  hydrometry_ts[, .(ts_timestamp, 
+                    ts_value,
+                    ts_shortname,
+                    stationparameter_name,
+                    quality_code,
+                    station_id)
+                ][,
+                  `:=`(year = year(ts_timestamp),
+                       month = month(ts_timestamp),
+                       ym = as_date(ts_timestamp),
+                       param = str_to_lower(stationparameter_name),
+                       ts_value = as.numeric(ts_value))
+                  ][
+                    year %in% 1990:2022
+                    ][,
+                      ts_name := str_to_lower(str_remove(ts_shortname, "^H"))
+                      ][,
+                      c("freq", "measure") := tstrsplit(ts_name, "\\.")
+                      ][]
+
+hydrometry_ts_clean[, .N, by = .(param, freq, measure)]
+
+hydrometry_ts_gw <- hydrometry_ts_clean[param == "groundwaterlevel"]  
+hydrometry_ts_fl <- hydrometry_ts_clean[param == "flow"]
+hydrometry_ts_lv <- hydrometry_ts_clean[param == "level"] 
+
+hydrometry_ts_lv_wide_month <-
+  dcast(
+    hydrometry_ts_lv,
+    station_id + year + month ~ param + measure,
+    value.var = "ts_value"
+    )
+
+hydrometry_ts_lv_wide <-
+  hydrometry_ts_lv_wide_month[
+    !is.na(level_max) & !is.na(level_mean),
+    .(level_max = max(level_max, na.rm = TRUE),
+      level_mean = mean(level_mean, na.rm = TRUE)),
+    by = .(station_id, year)
+    ]
+
+hydrometry_ts_gw_wide <-
+  hydrometry_ts_gw %>%
+  dcast(
+    station_id + year ~ param + measure,
+    value.var = "ts_value"
+  )
+
+hydrometry_ts_fl_day_wide <-
+  hydrometry_ts_fl[freq == "day"] %>%
+  dcast(
+    station_id + ym ~ param + measure,
+    value.var = "ts_value"
+    )
+
+hydrometry_ts_fl_max <-
+  hydrometry_ts_fl[
+    freq == "year", 
+    .(station_id, year, flow_max = ts_value)
+    ]
+
+hydrometry_ts_fl_mean <-
+  hydrometry_ts_fl_day_wide[,
+                            year := year(ym)
+                            ][,
+                              .(flow_mean = mean(as.numeric(flow_mean), na.rm = TRUE)),
+                              by = .(station_id, year)
+                              ]
+hydrometry_ts_fl_wide <-
+  merge(
+    hydrometry_ts_fl_max, 
+    hydrometry_ts_fl_mean, 
+    all = TRUE, 
+    by = c("station_id", "year")
+  )
+
 
 hydrometry_by_river_grid_year <-
-  hydrometry_ts %>%
-  select(timestamp, 
-         river_level = ts_value,
-         quality_code,
-         station_id) %>%
-  mutate(year = year(timestamp),
-         month = month(timestamp),
-         ym = as_date(floor_date(timestamp, "month"))) %>%
-  # This is when the land use data starts
-  filter(year %in% 1990:2022) %>%
-  left_join(hydrometry_river_join, 
-            by = "station_id",
-            relationship = "many-to-many") %>%
+  hydrometry_ts_fl_wide %>%
+  merge(hydrometry_ts_gw_wide, all = TRUE, by = c("station_id", "year")) %>%
+  merge(hydrometry_ts_lv_wide, all = TRUE, by = c("station_id", "year")) %>%
+  left_join(
+    hydrometry_river_join,
+    by = "station_id"
+  ) %>%
   group_by(river_id, year) %>%
   summarise(
-    river_level_mean = mean(river_level, na.rm = TRUE)
+    across(
+      ends_with("_mean"),
+      ~ mean(.x, na.rm = TRUE)
+      ),
+    across(
+      ends_with("_max"),
+      ~ max(.x, na.rm = TRUE)
+    )
   ) %>%
-  ungroup() %>%
-  setDT() %>%
-  setkey(river_id, year)
+  mutate(
+    across(
+      everything(),
+      ~ if_else(is.nan(.x) | is.infinite(.x), NA, .x)
+      )
+  )
+  
 
 # Analysis ========================================
 
@@ -128,27 +213,3 @@ river_year_panel_all_data %>%
   write_parquet(
     file.path(path_data_clean, "treatment", "river_grid_year_panel_unfilled.pqt")
   )
-
-#' @EDA
-#' # Only covers 311 river grid cells. 
-#' #' @TODO: consider changing this join from intersects to within a certain 
-#' #' distance, to give more river grid cells measurements
-#' #' @Note: balanced in time but not in space
-#' hydrometry_by_river_grid_year %>%
-#'   ggplot(aes(year, river_id, fill = river_level_mean)) +
-#'   geom_tile() +
-#'   scale_fill_viridis_c(trans = "log10", option = "inferno", labels = scales::label_comma())
-#' 
-#' ## Land use =====================
-#' #' @Note: balanced in space but not in time
-#' river_grid_ag_share %>%
-#'   ggplot(aes(year, river_id, fill = ag_share)) +
-#'   geom_tile() +
-#'   scale_fill_viridis_c(option = "inferno", direction = 1)
-#' 
-#' #' @Note: balanced in space (implicitly), but not time
-#' #' "implicitly" because only positive sighting are reported in the data
-#' beaver_by_river_grid_year %>%
-#'   ggplot(aes(effective_survey_year, river_id, fill = n)) +
-#'   geom_tile() +
-#'   scale_fill_viridis_c(option = "inferno", trans = "log10")

@@ -54,18 +54,12 @@
             linkbordercolor = {white},
             anchorcolor = black]{hyperref}
 \usepackage{footnotebackref}            
-\usepackage[colorinlistoftodos,prependcaption]{todonotes}
+%\usepackage[colorinlistoftodos,prependcaption]{todonotes}
 \usepackage{xargs} 
 \usepackage[document]{ragged2e}
 \usepackage[affil-it]{authblk}
 \usepackage{soul}
 \usepackage{epigraph}
-
-
-% %COMMENT OUT BELOW IF USING NON-RANDOM AUTHOR ORDER
-%     \renewcommand\Authsep{ \textcircled{r} }
-%     \renewcommand\Authands{ \textcircled{r} }
-% %COMMENT OUT ABOVE IF USING NON-RANDOM AUTHOR ORDER
 
 \linespread{1.6} % Spacing of lines 
 \def\arraystretch{1.3} % Spacing of table rows 
@@ -205,5 +199,5 @@
 
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 
-\newcommand*{\tabPath}{placeholder}%
+\newcommand*{\tabPath}{output/tables/}%
 \newcommand*{\rootPath}{paper/}

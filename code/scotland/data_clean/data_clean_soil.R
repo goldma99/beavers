@@ -77,7 +77,7 @@ soil_lca_250k_diff <-
   soil_lca_250k_clean %>%
   st_difference(soil_lca_50k_mainland)
 
-soil_lca_50k_250k_bind <-
+soil_lca_full_cover <-
   soil_lca_50k_raw %>%
   select(LCCODE, Scale) %>%
   bind_rows(
@@ -90,9 +90,7 @@ soil_lca_full_cover_clean <-
   left_join(
     soil_lca_ref_clean,
     by = "lccode"
-    ) %>%
-  # Ensure there are no overlapping bits of thr 250k map left on the east coast
-  st_difference()
+    )
 
 # Output ==========================================
 soil_lca_full_cover_clean %>%

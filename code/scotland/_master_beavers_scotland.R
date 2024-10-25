@@ -31,6 +31,8 @@ library(data.table)
 library(sf)
 library(terra)
 
+library(fixest)
+
 library(arrow)
 
 library(igraph)
@@ -92,5 +94,3 @@ if (SOURCE_SCRIPTS) {
     file.path("_master_data_construct.R") %>%
     source()
 }
-
-print("hello, world") # test edit

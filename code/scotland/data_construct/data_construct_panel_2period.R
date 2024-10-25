@@ -40,21 +40,25 @@ river_grid_year_panel_unfilled <-
 
 # Pre- and post-treatment periods
 river_grid_year_panel_unfilled[,
-                               t := fcase(year %in% 1990:2000, 0,
-                                          year %in% 2020:2022, 1)
+                               `:=`(t_overall = fcase(year %in% 1990:2000, 0,
+                                                      year %in% 2020:2022, 1),
+                                    t_g1      = fcase(year %in% 1990:2000, 0,
+                                                      year %in% 2012:2022, 1),
+                                    t_g2      = fcase(year %in% 1990:2000, 0,
+                                                      year %in% 2017:2022, 1))
                                ]
 
 river_grid_year_panel_unfilled[,
-                               `:=`(first_year_treated = first_year_treated(year, beaver_d),
-                                    ever_treated = !is.na(first_year_treated)),
-                               by = "river_id"]
+                               treatment_year := first_year_treated(year, beaver_d),
+                               by = "river_id"
+                               ]
 
 # Treatment groups 
 river_grid_year_panel_unfilled[,
-                               g := fcase(is.na(first_year_treated) , 0,
-                                          first_year_treated == 2012, 1,
-                                          first_year_treated == 2017, 2,
-                                          first_year_treated == 2020, 3)
+                               g := fcase(is.na(treatment_year) , 0,
+                                          treatment_year == 2012, 1,
+                                          treatment_year == 2017, 2,
+                                          treatment_year == 2020, 3)
                                ]
 
 # Aggregate to grid-cell-by-t, with all covariates averaged
@@ -63,42 +67,73 @@ sd_cols <- str_subset(names(river_grid_year_panel_unfilled), "_?mean_?|_max|ag_s
 hydro_vars_usable <- c("flow_mean", "level_mean", "level_max")
 hydro_vars_to_drop <- c("groundwaterlevel_mean", "groundwaterlevel_max", "flow_max")
 
-river_grid_panel_2period <-
+## Overall sample =================
+river_grid_panel_2period_overall <-
   river_grid_year_panel_unfilled[,
-                                 c(
-                                   .(g = unique(g),
-                                     ever_treated = unique(ever_treated)),
-                                   lapply(.SD, mean, na.rm = TRUE)
-                                   ),
-                                 by = .(river_id, t),
+                                 c(.(g = unique(g)),
+                                   lapply(.SD, mean, na.rm = TRUE)),
+                                 by = .(river_id, t_overall),
                                  .SDcols = sd_cols
                                  ][,
                                    (sd_cols) := map(.SD, ~ na_if(.x, NaN)),
                                    .SDcols = sd_cols
                                    ][
-                                     !is.na(t)
-                                   ][,
-                                     beaver_d := fcase(g == 0 | t == 0, 0,
+                                     !is.na(t_overall)
+                                     ][,
+                                       beaver_d := fcase(g == 0 | t_overall == 0, 0,
                                                        default = 1)
-                                     ][, 
-                                       !..hydro_vars_to_drop
-                                     ]
+                                       ][,
+                                         !..hydro_vars_to_drop
+                                         ]
 
-nonmissing_level <-
-  river_grid_panel_2period %>%
-  group_by(river_id) %>%
-  filter(ever_treated,
-         all(!is.na(level_mean)))
-  
-library(fixest)
-feols(
-  ag_share ~ beaver_d | mean_elevation + mean_slope + river_id + t,
-  data = river_grid_panel_2period
-  )
-  broom::tidy()
-
+## Only 2012-treated =================
+river_grid_panel_2period_g1 <-
+  river_grid_year_panel_unfilled[!g %in% c(2, 3),
+                                 c(.(g = unique(g)),
+                                   lapply(.SD, mean, na.rm = TRUE)),
+                                 by = .(river_id, t_g1),
+                                 .SDcols = sd_cols
+                                 ][,
+                                   (sd_cols) := map(.SD, ~ na_if(.x, NaN)),
+                                   .SDcols = sd_cols
+                                   ][
+                                     !is.na(t_g1)
+                                     ][,
+                                       beaver_d := fcase(g == 0 | t_g1 == 0, 0,
+                                                       default = 1)
+                                       ][,
+                                         !..hydro_vars_to_drop
+                                         ]
+## Only 2012- and 2017-treated =================
+river_grid_panel_2period_g2 <-
+  river_grid_year_panel_unfilled[g != 3,
+                                 c(.(g = unique(g)),
+                                   lapply(.SD, mean, na.rm = TRUE)),
+                                 by = .(river_id, t_g2),
+                                 .SDcols = sd_cols
+                                ][,
+                                  (sd_cols) := map(.SD, ~ na_if(.x, NaN)),
+                                  .SDcols = sd_cols
+                                  ][
+                                    !is.na(t_g2)
+                                    ][,
+                                      beaver_d := fcase(g == 0 | t_g2 == 0, 0,
+                                                        default = 1)
+                                      ][,
+                                        !..hydro_vars_to_drop
+                                        ]
 # Output ==========================================
-river_grid_panel_2period %>%
+river_grid_panel_2period_overall %>%
   write_parquet(
-    file.path(path_data_clean, "treatment", "river_grid_panel_2period.pqt")
+    file.path(path_data_clean, "treatment", "river_grid_panel_2period_overall.pqt")
+  )
+
+river_grid_panel_2period_g1 %>%
+  write_parquet(
+    file.path(path_data_clean, "treatment", "river_grid_panel_2period_g1.pqt")
+  )
+
+river_grid_panel_2period_g2 %>%
+  write_parquet(
+    file.path(path_data_clean, "treatment", "river_grid_panel_2period_g2.pqt")
   )

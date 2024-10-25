@@ -45,12 +45,22 @@ if (READ_DATA) {
     file.path("geography", "nuts_scotland", "nuts_scotland.shp") %>%
     read_sf()
   
-  ## Panel
+  ## Panel: unfilled 
+  river_grid_year_panel_unfilled <-
+    path_data_clean %>%
+    file.path(
+      "treatment", 
+      "river_grid_year_panel_unfilled.pqt"
+    ) %>%
+    read_parquet()
+  
+  ## Panel: filled
   river_grid_year_panel_filled <-
     path_data_clean %>%
     file.path("treatment", "river_grid_year_panel_filled.pqt") %>%
     read_parquet() %>%
     setDT()
+  
 }
 
 # Plot generation ========================================
@@ -66,12 +76,13 @@ beavers_fig_args <-
   tribble(
     ~plot_fn, ~filename, ~path, ~width, ~height,
     plot_study_area, "study_area.pdf", path_output_figures, 7, 10,
-    plot_lcm_in_study_area, "lcm_in_study_area.png", path_output_figures, 12, 7,
+    plot_lcm_in_study_area, "lcm_in_study_area.png", path_output_figures, 7, 7,
     plot_lcm_agg_river_grid, "lcm_agg_river_grid.pdf", path_output_figures, 12, 7,
-    plot_ag_share_fill, "ag_share_fill.pdf", path_output_figures, 12, 7
+    plot_outcome_pretrends, "outcome_pretrends.pdf", path_output_figures, 9, 7,
+    plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 9, 7
     ) 
 
 ## Generate and save plots 
 beavers_fig_args %>%
-    slice(2) %>%
+    slice(3) %>%
     pwalk(ggsave_wrapper)

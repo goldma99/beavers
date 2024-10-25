@@ -4,7 +4,7 @@ ggsave_wrapper <-
 #' tribble contains the unexecuted plotting function, to be called only
 #' once ggsave is called
 #' @returns Called for side effect (writing file)
-function(plot_fn, filename, path, width, height, units) {
+function(plot_fn, filename, path, width, height, units, ...) {
 
   file <-
     ggsave(
@@ -13,7 +13,8 @@ function(plot_fn, filename, path, width, height, units) {
       path = path,
       width = width,
       height = height,
-      units = "in"
+      units = "in",
+      dpi = 400
       )
       
   message("Saved: ", file)

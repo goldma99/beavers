@@ -1,8 +1,11 @@
 plot_beaver_first_year_treated <- function() {
   
   river_grid_first_year <-
-    river_grid_year_panel_filled %>%
-    distinct(river_id, beaver_d_fillf_first_year) %>%
+    river_grid_year_panel_unfilled[,
+                                   treatment_year := first_year_treated(year, beaver_d),
+                                   by = "river_id"][] %>%
+    distinct(river_id, treatment_year) %>%
+    #filter(!is.na(treatment_year)) %>%
     left_join(
       select(river_grid, river_id, on_river),
       by = c("river_id")
@@ -13,9 +16,10 @@ plot_beaver_first_year_treated <- function() {
   ggplot() +
     geom_sf(data = river_grid_first_year, fill = "#c9cdcf", color = NA) +
     geom_sf(data = river_grid_first_year, 
-            aes(fill = as.factor(beaver_d_fillf_first_year)),
+            aes(fill = as.factor(treatment_year)),
             color = NA) +
     scale_fill_viridis_d(
+      begin = 0.25,
       guide = guide_legend(
         position = "inside",
         nrow = 1,

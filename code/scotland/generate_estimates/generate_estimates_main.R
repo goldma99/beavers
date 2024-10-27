@@ -16,7 +16,6 @@
 
 # Read in data ====================================
 
-
 treatment_panel_list <-
   c("overall", "g1", "g2") %>%
   purrr::set_names() %>%
@@ -30,6 +29,7 @@ y_mean_overall <- treatment_panel_list$overall[, lapply(.SD,
                                                         ), .SDcols = lhs] %>%
   as.vector() %>%
   list_c()
+
 y_mean_g2 <- treatment_panel_list$g2[, lapply(.SD, 
                                               \(x) round(mean(x, na.rm = TRUE), 3)
                                               ), .SDcols = lhs]
@@ -40,7 +40,7 @@ y_mean_g1 <- treatment_panel_list$g1[, lapply(.SD,
 est_main_Soverall <-
   feols(
     fml = .[lhs] ~ beaver_d | river_id + t_overall,
-    data = treatment_panel_list$overall
+    data = treatment_panel_list$overall[on_river == 1]
 )
 
 
@@ -49,7 +49,6 @@ est_main_Sg1 <-
     fml = .[lhs] ~ beaver_d | river_id + t_g1,
     data = treatment_panel_list$g1
   )
-
 
 est_main_Sg2 <-
   feols(
@@ -65,7 +64,7 @@ beaver_dict <-
     "level_mean" = "River level (mean)",
     "level_max" = "River level (max)",
     "flow_mean" = "River flow (mean)",
-    "river_id" = "Landscape cells",
+    "river_id" = "Grid cell",
     "t_overall" = "Period",
     "t_g1" = "Time Period",
     "t_g2" = "Time Period"

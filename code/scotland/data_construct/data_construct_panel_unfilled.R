@@ -106,8 +106,6 @@ hydrometry_ts_clean <-
                       c("freq", "measure") := tstrsplit(ts_name, "\\.")
                       ][]
 
-hydrometry_ts_clean[, .N, by = .(param, freq, measure)]
-
 hydrometry_ts_gw <- hydrometry_ts_clean[param == "groundwaterlevel"]  
 hydrometry_ts_fl <- hydrometry_ts_clean[param == "flow"]
 hydrometry_ts_lv <- hydrometry_ts_clean[param == "level"] 
@@ -194,9 +192,14 @@ hydrometry_by_river_grid_year <-
 
 ## Merge beaver, hydrometry, and ag_share 
 river_year_panel_complete <-
-  river_grid_sf_clean %>%
+  river_grid_sf %>%
   st_drop_geometry() %>%
-  expand(river_id, year = 1990:2022) %>%
+  mutate(year = 1990) %>%
+  group_by(river_id, on_river) %>%
+  complete(
+    year = 1990:2022
+  ) %>%
+  ungroup() %>%
   setDT() %>%
   setkey(river_id, year)
  

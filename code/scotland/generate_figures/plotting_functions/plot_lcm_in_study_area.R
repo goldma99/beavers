@@ -42,4 +42,5 @@ plot_lcm_in_study_area <- function() {
         text = element_text(family = "cmr", size = 19),
         legend.position = "top"
       )
+  
 }

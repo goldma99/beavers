@@ -1,6 +1,6 @@
 \begin{table}[htbp]
    \caption{Beaver impacts on agriculture and river characteristics.}
-   \bigskip
+   %\bigskip
    \centering
    \begin{tabular}{lcccc}
       \tabularnewline\midrule\midrule
@@ -8,17 +8,16 @@
                                     & (1)           & (2)                & (3)               & (4)\\  
       \midrule 
       Beaver Presence               & 0.017$^{***}$ & -0.034             & 0.063             & -0.054\\   
-                                    & (0.005)       & (0.026)            & (0.076)           & (0.269)\\   
-       \\
+                                    & (0.005)       & (0.026)            & (0.076)           & (0.269)\\
+      \midrule
       Observations                  & 28,388        & 157                & 157               & 119\\  
       Within R$^2$                  & 0.002         & 0.027              & 0.010             & 0.001\\  
       Mean Dep Var                  & 0.125         & 0.843              & 2.467             & 16.400\\  
-       \\
+       \midrule
       Landscape cells fixed effects & $\checkmark$  & $\checkmark$       & $\checkmark$      & $\checkmark$\\   
       Period fixed effects          & $\checkmark$  & $\checkmark$       & $\checkmark$      & $\checkmark$\\   
       \midrule \midrule & \tabularnewline
    \end{tabular}
-   
-   \par \raggedright 
+   \justifying \footnotesize
    Each column reports results from a two-way fixed effects regression.   Landscape grid cell and time period (pre- and post-beaver entry) are included.   Standard errors are clustered at the landscape grid cell level.   Regression sample includes all never-treated and ever-treated units.
 \end{table}

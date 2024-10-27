@@ -1,0 +1,31 @@
+\begin{table}[htb]
+\captionlistentry[table]{}
+\label{table:beaver_main_g1}
+\centering
+Table \ref{table:beaver_main_g1} \\
+Beaver impacts (only 2012 treated cohort) \\
+\begin{threeparttable}
+\begin{tabulary}{\textwidth}{l*{5}{c}@{}}
+\toprule \toprule
+\noalign{\smallskip}
+& Share Agri. & River Level (mean) & River Level (max) & River Flow (mean) \\
+& (1) & (2) & (3) & (4) \\
+\ExpandableInput{\tabPath/beaver_main/beaver_main_Sg1_all_cells_panel.tex}
+\ExpandableInput{\tabPath/beaver_main/beaver_main_Sg1_river_cells_panel.tex}
+\noalign{\smallskip}
+\midrule \bottomrule
+\end{tabulary}
+\medskip
+\begin{tablenotes}[flushleft]
+\setlength\labelsep{0pt}
+\item
+\footnotesize
+\justify
+Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}.
+Each regression includes grid cell and time period fixed effects.
+Sample includes only 2012 treated cohort in study region.
+Standard errors are clustered at the grid cell level. \\
+\mbox{*} 0.10 ** 0.05 *** 0.01
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

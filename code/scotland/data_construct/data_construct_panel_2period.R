@@ -128,16 +128,16 @@ river_grid_panel_2period_g1 <-
 
 # Output ==========================================
 river_grid_panel_2period_overall %>%
-  write_parquet(
-    file.path(path_data_clean, "treatment", "river_grid_panel_2period_overall.pqt")
+  write_dta(
+    file.path(path_data_clean, "treatment", "river_grid_panel_2period_overall.dta")
   )
 
 river_grid_panel_2period_g1 %>%
-  write_parquet(
-    file.path(path_data_clean, "treatment", "river_grid_panel_2period_g1.pqt")
+  write_dta(
+    file.path(path_data_clean, "treatment", "river_grid_panel_2period_g1.dta")
   )
 
 river_grid_panel_2period_g2 %>%
-  write_parquet(
-    file.path(path_data_clean, "treatment", "river_grid_panel_2period_g2.pqt")
+  write_dta(
+    file.path(path_data_clean, "treatment", "river_grid_panel_2period_g2.dta")
   )

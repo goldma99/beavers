@@ -40,8 +40,20 @@ y_mean_g1 <- treatment_panel_list$g1[, lapply(.SD,
 est_main_Soverall <-
   feols(
     fml = .[lhs] ~ beaver_d | river_id + t_overall,
-    data = treatment_panel_list$overall[on_river == 1]
+    data = treatment_panel_list$overall
 )
+
+est_main_Soverall_river <-
+  feols(
+    fml = .[lhs] ~ beaver_d | river_id + t_overall,
+    data = treatment_panel_list$overall[on_river == 1]
+  )
+
+panelsummary_raw(
+    est_main_Soverall,
+    est_main_Soverall_river
+    ) %>%
+  clean_raw()
 
 
 est_main_Sg1 <-

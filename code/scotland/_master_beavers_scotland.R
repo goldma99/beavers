@@ -26,6 +26,8 @@ library(lubridate)
 library(httr2)
 library(rvest)
 
+library(haven)
+
 library(data.table)
 
 library(sf)

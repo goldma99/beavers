@@ -77,6 +77,7 @@ beavers_fig_args <-
     ~plot_fn, ~filename, ~path, ~width, ~height,
     plot_study_area, "study_area.pdf", path_output_figures, 7, 10,
     plot_lcm_in_study_area, "lcm_in_study_area.png", path_output_figures, 7, 7,
+    plot_lcm_example_area, "lcm_example_area.pdf", path_output_figures, 10, 7,
     plot_lcm_agg_river_grid, "lcm_agg_river_grid.pdf", path_output_figures, 12, 7,
     plot_outcome_pretrends, "outcome_pretrends.pdf", path_output_figures, 9, 7,
     plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 9, 7
@@ -86,3 +87,4 @@ beavers_fig_args <-
 beavers_fig_args %>%
     slice(3) %>%
     pwalk(ggsave_wrapper)
+

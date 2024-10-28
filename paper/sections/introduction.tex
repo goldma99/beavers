@@ -3,7 +3,7 @@
 % I got a fact from \cite{fairfax_using_2018} and \cite{alakoski_distribution_2021}. I got another fact from this paper \parencite{bouwes_ecosystem_2016}. I also want to mention this paper. \footcite{bartak_spatial_2013}
 % -----------------------------------------------
 
-Economic production faces environmental conditions that threaten efficiency. Technology and industrial partially neutralize the threat (for instance, irrigation enabling productive agriculture in arid regions), but economically desirable solutions may harm social welfare. One salient example is the conflict between wildlife and agriculture. The success of farming operations has often hinged on the ability of the producer or its government to cull livestock predators and crop grazers, repel potential vectors of disease, and eliminate crop-eating pests with mass insecticide use. Such measures, however, may produce both ecologically and socially undesirable outcomes. Case studies abound. In the past two decades, the US Department of Agriculture's Wildlife Services has killed 56 million wild animals, including some otherwise protected by the Endangered Species Act, to protect agricultural, largely livestock, assets (VOX CITE). Pesticides used to protect crop yields negatively impact human and animal health \citep{larsen_agricultural_2017}, leading in part to the formation of the modern American environmental movement \citep{woodwell_broken_1984}. The Chinese ``Four Pests Campaign'' encouraged the mass killing of sparrows, believed to feed on grain reservoirs, and inadvertently eliminated sparrows' valuable pest-control services, playing a role in the subsequent mass famine (CITE). 
+Economic production faces environmental conditions that threaten efficiency. Technology and industrial partially neutralize the threat (for instance, irrigation enabling productive agriculture in arid regions), but economically desirable solutions may harm social welfare. One salient example is the conflict between wildlife and agriculture. The success of farming operations has often hinged on the ability of the producer or its government to cull livestock predators and crop grazers, repel potential vectors of disease, and eliminate crop-eating pests with mass insecticide use. Such measures, however, may produce both ecologically and socially undesirable outcomes. Case studies abound. In the past two decades, the US Department of Agriculture's Wildlife Services has killed 56 million wild animals, including some otherwise protected by the Endangered Species Act, to protect agricultural assets, largely livestock (VOX CITE). Pesticides used to protect crop yields negatively impact human and animal health \citep{larsen_agricultural_2017}, leading in part to the formation of the modern American environmental movement \citep{woodwell_broken_1984}. The Chinese ``Four Pests Campaign'' encouraged the mass killing of sparrows, believed to feed on grain reservoirs, and inadvertently eliminated sparrows' valuable pest-control services, playing a role in the subsequent mass famine (CITE). 
 
 Balancing economic production and ecosystem protection is complicated by climate change, habitat destruction, and biodiversity loss \citep{cardinale_biodiversity_2012}. Indeed, misunderstanding the role keystone species play in supporting their ecosystems can distort wildlife management policy; recent evidence has challenged long-held beliefs about so-called ``nuisance'' species (e.g., \cite{raynor_wolves_2021}). There remains, however, scant empirical evidence on the economic impacts of targeted wildlife on agricultural functioning.
 
@@ -27,29 +27,30 @@ The paper is structured as follows Section \ref{sec:background} briefly describe
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.6\linewidth]{output/figures/study_area.pdf}
-    \caption{Agricultural parish boundaries within study region}
+    \includegraphics[width=0.5\linewidth]{output/figures/study_area.pdf}
+    \caption{Study region (orange) within Scotland. Agricultural parish boundaries are drawn in gray.}
     \label{fig:enter-label}
 \end{figure}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.7\linewidth]{output/figures/lcm_in_study_area.png}
-    \caption{2022 numbers}
-    \label{fig:enter-label}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\linewidth]{output/figures/lcm_agg_river_grid.pdf}
-    \caption{2022 numbers}
-    \label{fig:lcm-agg}
+    %\centering
+    \begin{subfigure}{0.39\linewidth}
+        \includegraphics[width=\linewidth]{output/figures/lcm_in_study_area.png}
+        \caption{25m raster cells classified as agricultural (``arable'' in UKCEH nomenclature)}
+        \label{fig:ukceh-lcm-raw}    
+    \end{subfigure}
+    \begin{subfigure}{0.6\linewidth}
+        \includegraphics[width=\linewidth]{output/figures/lcm_agg_river_grid.pdf}
+        \caption{Agricultural raster layer aggregated to 1km$^2$ landscape grid cells in study region.}    
+        \label{fig:ukceh-lcm-agg}
+    \end{subfigure}
+    \caption{Agricultural land use in 2022. Data source: UK Center for Ecology \& Hydrology. See main text for details.}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{output/figures/beaver_first_year_treated.pdf}
-    \caption{Enter Caption}
+    \caption{Beaver detection by survey year in study region. Observation units are 1km$^2$ landscape grid cells. Data source: See main text for details.}
     \label{fig:enter-label}
 \end{figure}
 

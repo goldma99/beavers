@@ -225,7 +225,7 @@ estout C*_R* using "$path_tab_beaver_main/`filename_panel'.tex",
     tex Table \ref{table:beaver_main_ag_share_all_samples} \\ 
     tex Beaver impacts \\
     tex \begin{threeparttable} 
-    tex \begin{tabulary}{\textwidth}{l*{5}{c}@{}} 
+    tex \begin{tabulary}{\textwidth}{l*{7}{c}@{}} 
     tex \toprule \toprule
     tex \noalign{\smallskip}
     tex \ExpandableInput{\tabPath/beaver_main/`filename_panel'.tex}

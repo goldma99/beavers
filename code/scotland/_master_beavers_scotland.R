@@ -25,6 +25,7 @@ library(janitor)
 library(lubridate)
 library(httr2)
 library(rvest)
+library(units)
 
 library(data.table)
 

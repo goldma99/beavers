@@ -25,6 +25,7 @@ library(janitor)
 library(lubridate)
 library(httr2)
 library(rvest)
+library(units)
 
 library(haven)
 
@@ -62,6 +63,8 @@ path_data_scotland_survey      <- file.path(path_data_scotland, "beaver-survey",
 path_data_scotland_river       <- file.path(path_data_scotland, "river-network")
 path_data_scotland_parish      <- file.path(path_data_scotland, "ag-parishes")
 path_data_scotland_ukceh       <- file.path(path_data_scotland, "ukceh")
+path_data_scotland_soil       <- file.path(path_data_scotland, "soil")
+
 
 path_data_clean            <- file.path(path, "data", "data_clean")
 path_data_clean_beaver     <- file.path(path_data_clean, "beaver_survey")
@@ -69,6 +72,7 @@ path_data_clean_parish     <- file.path(path_data_clean, "ag_parishes")
 path_data_clean_hydrometry <- file.path(path_data_clean, "hydrometry")
 path_data_clean_river      <- file.path(path_data_clean, "river_network")
 path_data_clean_lc         <- file.path(path_data_clean, "land_cover")
+path_data_clean_soil       <- file.path(path_data_clean, "soil")
 
 path_output         <- file.path(path, "output")
 

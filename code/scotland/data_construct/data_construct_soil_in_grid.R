@@ -33,7 +33,7 @@ river_grid_sf <-
 
 #' @Note: set attributes as constant across geoms to avoid stopping errors
 st_agr(river_grid_sf) <- "constant"
-st_agr(soil_lca_sf) <- "constant"
+st_agr(soil_lca_sf)   <- "constant"
 
 ## Grid cell area will be the denominator in the soil share calc below
 river_grid_clean <-

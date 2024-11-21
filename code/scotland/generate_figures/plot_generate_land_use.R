@@ -27,6 +27,12 @@ if (READ_DATA) {
     file.path("river_ag_share", "river_ag_share_y2022.pqt") %>%
     read_parquet()
   
+  ## Soil capability classes
+  soil_lca_sf <-
+    path_data_clean_soil %>%
+    file.path("soil_lca", "soil_lca.shp") %>%
+    read_sf()
+  
   ## River grid shp
   river_grid <-
     path_data_clean_river %>%
@@ -80,11 +86,14 @@ beavers_fig_args <-
     plot_lcm_example_area, "lcm_example_area.pdf", path_output_figures, 10, 7,
     plot_lcm_agg_river_grid, "lcm_agg_river_grid.pdf", path_output_figures, 12, 7,
     plot_outcome_pretrends, "outcome_pretrends.pdf", path_output_figures, 9, 7,
-    plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 9, 7
+    plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 9, 7,
+    #plot_soil_lca_map, "soil_lca_map.pdf", path_output_figures, 12, 7,
+    plot_soil_lca_map, "soil_lca_map.png", path_output_figures, 8, 7,
+    plot_raw_spaghetti_ag_share_g2017, "raw_spaghetti_ag_share_g2017.pdf", path_output_figures, 12, 7
     ) 
-
+nrow(beavers_fig_args)
 ## Generate and save plots 
 beavers_fig_args %>%
-    slice(3) %>%
+    slice(7) %>%
     pwalk(ggsave_wrapper)
 

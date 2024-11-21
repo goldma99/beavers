@@ -36,30 +36,30 @@ river_grid_year_panel_unfilled <-
 
 # Clean data ======================================
 
-## Label periods and groups ===============
-
-# Pre- and post-treatment periods
-river_grid_year_panel_unfilled[,
-                               `:=`(t_overall = fcase(year %in% 1990:2000, 0,
-                                                      year %in% 2020:2022, 1),
-                                    t_g1      = fcase(year %in% 1990:2000, 0,
-                                                      year %in% 2012:2022, 1),
-                                    t_g2      = fcase(year %in% 1990:2000, 0,
-                                                      year %in% 2017:2022, 1))
-                               ]
-
-river_grid_year_panel_unfilled[,
-                               treatment_year := first_year_treated(year, beaver_d),
-                               by = "river_id"
-                               ]
-
-# Treatment groups 
-river_grid_year_panel_unfilled[,
-                               g := fcase(is.na(treatment_year) , 0,
-                                          treatment_year == 2012, 1,
-                                          treatment_year == 2017, 2,
-                                          treatment_year == 2020, 3)
-                               ]
+# ## Label periods and groups ===============
+# 
+# # Pre- and post-treatment periods
+# river_grid_year_panel_unfilled[,
+#                                `:=`(t_overall = fcase(year %in% 1990:2000, 0,
+#                                                       year %in% 2020:2022, 1),
+#                                     t_g1      = fcase(year %in% 1990:2000, 0,
+#                                                       year %in% 2012:2022, 1),
+#                                     t_g2      = fcase(year %in% 1990:2000, 0,
+#                                                       year %in% 2017:2022, 1))
+#                                ]
+# 
+# river_grid_year_panel_unfilled[,
+#                                treatment_year := first_year_treated(year, beaver_d),
+#                                by = "river_id"
+#                                ]
+# 
+# # Treatment groups 
+# river_grid_year_panel_unfilled[,
+#                                g := fcase(is.na(treatment_year) , 0,
+#                                           treatment_year == 2012, 1,
+#                                           treatment_year == 2017, 2,
+#                                           treatment_year == 2020, 3)
+#                                ]
 
 # Aggregate to grid-cell-by-t, with all covariates averaged
 sd_cols <- str_subset(names(river_grid_year_panel_unfilled), "_?mean_?|_max|ag_share")
@@ -71,6 +71,10 @@ hydro_vars_to_drop <- c("groundwaterlevel_mean", "groundwaterlevel_max", "flow_m
 river_grid_panel_2period_overall <-
   river_grid_year_panel_unfilled[,
                                  c(.(g = unique(g),
+                                     lccd_mj_dom = unique(lccd_mj_dom),
+                                     soil_share_igrg = unique(soil_share_igrg),
+                                     soil_share_nag = unique(soil_share_nag),
+                                     soil_share_ac = unique(soil_share_ac),
                                      on_river = unique(on_river)),
                                    lapply(.SD, mean, na.rm = TRUE)),
                                  by = .(river_id, t_overall),
@@ -81,15 +85,19 @@ river_grid_panel_2period_overall <-
                                    ][
                                      !is.na(t_overall)
                                      ][,
-                                       beaver_d := fcase(g == 0 | t_overall == 0, 0,
-                                                       default = 1)
+                                       beaver_d := fcase(g == 0 | t_overall == 0, 0, default = 1)
                                        ][,
                                          !..hydro_vars_to_drop
                                          ]
+
 ## Only 2012- and 2017-treated =================
 river_grid_panel_2period_g2 <-
   river_grid_year_panel_unfilled[g != 3,
                                  c(.(g = unique(g),
+                                     lccd_mj_dom = unique(lccd_mj_dom),
+                                     soil_share_igrg = unique(soil_share_igrg),
+                                     soil_share_nag = unique(soil_share_nag),
+                                     soil_share_ac = unique(soil_share_ac),
                                      on_river = unique(on_river)),
                                    lapply(.SD, mean, na.rm = TRUE)),
                                  by = .(river_id, t_g2),
@@ -110,6 +118,10 @@ river_grid_panel_2period_g2 <-
 river_grid_panel_2period_g1 <-
   river_grid_year_panel_unfilled[!g %in% c(2, 3),
                                  c(.(g = unique(g),
+                                     lccd_mj_dom = unique(lccd_mj_dom),
+                                     soil_share_igrg = unique(soil_share_igrg),
+                                     soil_share_nag = unique(soil_share_nag),
+                                     soil_share_ac = unique(soil_share_ac),
                                      on_river = unique(on_river)),
                                    lapply(.SD, mean, na.rm = TRUE)),
                                  by = .(river_id, t_g1),

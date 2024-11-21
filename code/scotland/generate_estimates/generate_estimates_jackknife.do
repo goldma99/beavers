@@ -1,8 +1,8 @@
 /*
-   Description: Generate main specifications of outcome ~ beaver entry
+   Description: Run main estimation with jackknife leave-on-out procedure
    Author: Miriam Gold
    Reviewer: name
-   Last revised: 27 Oct 2024, mag
+   Last revised: 18 Nov 2024, mag
    Notes: notes
 */
 
@@ -34,25 +34,16 @@ global path_data_est       "$path_data/estimates"
 
 // Regression globals -------------------------------------------
 global samples_cohort ///
-       overall ///
-       g2 ///
-       g1
+       overall
 
 global samples_river ///
-       all_cells ///
        river_cells
 
 global samples_soil ///
-       all_soil ///
-       AC ///
-       IGRG ///
-       NAG
+       AC
 
 global dep_vars ///
-       ag_share ///
-       level_mean ///
-       level_max ///
-       flow_mean
+       ag_share
 
 global indep_vars beaver_d
 
@@ -68,10 +59,6 @@ foreach sample_cohort in $samples_cohort {
     use $path_data_treatment/river_grid_panel_2period_`sample_cohort'
 }
 
-********************************************************************************
-// 2. Run Regressions ----------------------------------------------------------
-********************************************************************************
-
 foreach sample_cohort in $samples_cohort {
     foreach sample_river in $samples_river {
         foreach sample_soil in $samples_soil {
@@ -79,7 +66,7 @@ foreach sample_cohort in $samples_cohort {
                 foreach indep_var in $indep_vars {
                     foreach fe in $fes {
                         foreach cl in river_id {
-                            
+
                             cwf S`sample_cohort'
 
                             if "`sample_river'" == "all_cells" {
@@ -106,17 +93,21 @@ foreach sample_cohort in $samples_cohort {
                             else {
                                 di as error "Unsupported fe value: `fe'"
                             }
+                            qui levelsof river_id if `sample_restriction', local(cell_ids)
 
-                            reghdfe `dep_var' `indep_var' if `sample_restriction', ///
-                                    absorb(`fe_set') ///
-                                    cluster(`cl')
+                            foreach cell_id in `cell_ids' {
+                                reghdfe `dep_var' `indep_var' if `sample_restriction' & river_id != `cell_id', ///
+                                       absorb(`fe_set') ///
+                                       cluster(`cl') 
 
-                            estadd ysumm
-                            estadd local sample_cohort "`sample_cohort'"
-                            estadd local sample_river  "`sample_river'"
-                            estadd local sample_soil   "`sample_soil'"
+                                estadd ysumm
+                                estadd local sample_cohort "`sample_cohort'"
+                                estadd local sample_river  "`sample_river'"
+                                estadd local sample_soil   "`sample_soil'"
+                                estadd local omitted_cell  "`cell_id'"
 
-                            estimates save $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'.ster, replace
+                                estimates save $path_data_est/jackknife/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'_jk`cell_id'.ster, replace
+                            }                            
                         }
                     }
                 }

@@ -2,7 +2,7 @@
    Description: Make tables for main specifications of outcome ~ beaver
    Author: Miriam Gold
    Reviewer: 
-   Last revised: 27 Oct, mag
+   Last revised: 27 Oct 2024, mag
    Notes: notes
 */
 
@@ -29,6 +29,7 @@ else {
 global path_data_treatment "$path_data/data_clean/treatment"
 global path_data_est       "$path_data/estimates"
 global path_tab_beaver_main "$path/output/tables/beaver_main"
+
 // Regression globals -------------------------------------------
 global samples_cohort ///
        overall ///
@@ -38,6 +39,8 @@ global samples_cohort ///
 global samples_river ///
        all_cells ///
        river_cells
+
+global samples_soil all_soil
 
 global dep_vars ///
        ag_share ///
@@ -52,6 +55,7 @@ global fes twfe
 ********************************************************************************
 // 1. Make tables --------------------------------------------------------------
 ********************************************************************************
+local sample_soil all_soil
 
 foreach sample_cohort in $samples_cohort {
 
@@ -74,7 +78,7 @@ foreach sample_cohort in $samples_cohort {
                 foreach fe in $fes {
                     foreach cl in river_id {
                         
-                        est use $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_FE`fe'_CL`cl'.ster
+                        est use $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'.ster
                         est sto DV`dep_var'                        
                     }
                 }

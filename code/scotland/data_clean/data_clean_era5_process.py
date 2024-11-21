@@ -33,9 +33,7 @@ MONTH_AGG = False
 YEAR_AGG = True
 
 # Process ERA5 climate data ====================
-years = ["1990"]
-
-p = "asdfasdf/202001\\"
+years = [y for y in range(2015, 2023)]
 
 for year in years:
 
@@ -58,7 +56,7 @@ for year in years:
             m_match = re.search("era5_tpv_\d{4}(\d{2})", m_dir)
             if m_match:
                 month = m_match.group(1)
-            path_out = os.path.join(path_era5_clean_m, f"{year}{month}.pqt")
+            path_out = os.path.join(path_era5_clean_m, f"era5_tpv_{year}{month}.pqt")
             m_agg.to_parquet(path_out) 
             print("Saved: ", path_out)
 
@@ -68,4 +66,15 @@ if YEAR_AGG:
     list_month_files = [os.path.join(path_era5_clean_m, f) for f in os.listdir(path_era5_clean_m)]
     data_year_rbind = pd.concat([pd.read_parquet(f) for f in list_month_files]) 
     data_year_rbind = data_year_rbind.reset_index()
+    
+    era5_year_agg = data_year_rbind \
+        .groupby(by=["cell_id", "year"]) \
+        .agg({"tp": "sum", "t2m": "mean", "lai_hv": "mean", "lai_lv": "mean"}) \
+        .reset_index()
+    
+    path_out_annual = os.path.join(path_era5_clean_y, "era5_tpv_annual.pqt")
+
+    era5_year_agg.to_parquet(path_out_annual)
+    
+
     

@@ -16,8 +16,9 @@ variables = [
 days = [f"{i:02}" for i in range(1,32)]
 times = [f"{i:02}:00" for i in range(0, 24)]
 
-for year in [y for y in range(1998, 2023)]:
-    for month in [f"{i:02}" for i in range(1, 13)]:
+for year in ["2015"]: #[y for y in range(1990, 2023)]:
+    for month in ["05"]: #[f"{i:02}" for i in range(1, 13)]:
+
         # Request params 
         request = {
             "variable": variables,

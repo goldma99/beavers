@@ -50,6 +50,12 @@ elevation_by_river_grid <-
   file.path("dem", "river_grid_elevation_slope.pqt") %>%
   read_parquet()
 
+## Soil agriculture capability classes =============
+soil_lca_by_river_grid <-
+  path_data_clean_soil %>%
+  file.path("river_grid_dom_soil.pqt") %>%
+  read_parquet()
+
 # Clean data ======================================
 
 ## River grid ===================
@@ -173,19 +179,13 @@ hydrometry_by_river_grid_year <-
   summarise(
     across(
       ends_with("_mean"),
-      ~ mean(.x, na.rm = TRUE)
+      ~ ifelse(all(is.na(.x)), NA, mean(.x, na.rm = TRUE))
       ),
     across(
       ends_with("_max"),
-      ~ max(.x, na.rm = TRUE)
+      ~ ifelse(all(is.na(.x)), NA, max(.x, na.rm = TRUE))
     )
-  ) %>%
-  mutate(
-    across(
-      everything(),
-      ~ if_else(is.nan(.x) | is.infinite(.x), NA, .x)
-      )
-  )
+  ) 
   
 
 # Analysis ========================================
@@ -208,8 +208,33 @@ river_year_panel_all_data <-
   merge(ag_share_by_river_grid_year  , all = TRUE, by = c("river_id", "year")) %>%
   merge(beaver_by_river_grid_year    , all = TRUE, by = c("river_id", "year")) %>%
   merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year")) %>%
-  merge(elevation_by_river_grid      , all = TRUE, by = "river_id")
+  merge(elevation_by_river_grid      , all = TRUE, by = "river_id") %>%
+  merge(soil_lca_by_river_grid       , all = TRUE, by = "river_id")
 
+## Label periods and groups ===============
+
+# Pre- and post-treatment periods
+river_year_panel_all_data[,
+                          `:=`(t_overall = fcase(year %in% 1990:2000, 0,
+                                                 year %in% 2020:2022, 1),
+                               t_g1      = fcase(year %in% 1990:2000, 0,
+                                                 year %in% 2012:2022, 1),
+                               t_g2      = fcase(year %in% 1990:2000, 0,
+                                                 year %in% 2017:2022, 1))
+                          ]
+
+# Treatment groups 
+river_year_panel_all_data[,
+                          treatment_year := first_year_treated(year, beaver_d),
+                          by = "river_id"
+                          ]
+
+river_year_panel_all_data[,
+                          g := fcase(is.na(treatment_year) , 0,
+                                     treatment_year == 2012, 1,
+                                     treatment_year == 2017, 2,
+                                     treatment_year == 2020, 3)
+                          ]
 # Output ==========================================
 
 river_year_panel_all_data %>%

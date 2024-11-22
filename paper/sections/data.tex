@@ -37,11 +37,19 @@ To detect beaver impacts on their immediate surrounding, I obtain data on river 
 
 \subsection{Soil}
 
+\begin{figure}
+    \centering
+    \caption{Soil agriculture capability classes}
+    \includegraphics[width=0.6\linewidth]{output/figures/soil_lca_map.png}
+    \caption*{\justifying \footnotesize Notes: Data from James Hutton Institute. Classes have been aggregated from the 13 original classifications. Study region outlined in red.}
+    \label{fig:soil-lca-map}
+\end{figure}
+
 % \begin{itemize}
 %     \item Elevation from ASTER (https://lpdaac.usgs.gov/products/astgtmv003/). Slope calculated as first derivative of elevation (constant)
 % \end{itemize}
 
-To distinguish between high and low agriculture-propensity areas, I use soil data from the James Hutton Institute. The soil map bins Scottish land into 13 main soil classes, ranging from soil suitable for a broad array of crops\footnote{This highest cropping suitability category is characterized by ``well-drained deep loam, sandy loams, silty loams or their related humic variants with good reserves of moisture. Sites are level or gently sloping and the climate is favourable. There are no or only very minor physical limitations affecting agricultural use'' (cite)} to soil that could be used only for rough grazing (e.g., rugged or extremely wet terrain). An additional three classes capture built, water, and unmapped island areas. I group the 13 bins into three broad classes: Arable Cropping, Improved Grassland and Rough Grazings, and Non-Agricultural (including built, water, and unmapped areas). To achieve full cover, I employ two versions of the soil map: a 1:50,000 scale map that is considered definitive where coverage exists (mainly in eastern lowlands, where arable land is widespread) and a 1:250,000 scale map that provides lower resolution coverage in highlands areas not mapped by the 50k scale map. I calculate the share of each landscape grid cell that is occupied by a given class and determine the dominant class (>50\%) in each cell.
+To distinguish between high and low agriculture-propensity areas, I use soil data from the James Hutton Institute. The soil map bins Scottish land into 13 main soil classes, ranging from soil suitable for a broad array of crops\footnote{This highest cropping suitability category is characterized by ``well-drained deep loam, sandy loams, silty loams or their related humic variants with good reserves of moisture. Sites are level or gently sloping and the climate is favourable. There are no or only very minor physical limitations affecting agricultural use'' (cite)} to soil that could be used only for rough grazing (e.g., rugged or extremely wet terrain). An additional three classes capture built, water, and unmapped island areas. In Fig. \ref{fig:soil-lca-map}, I group the 13 bins into three broad classes: Arable Cropping, Improved Grassland and Rough Grazings, and Non-Agricultural (including built, water, and unmapped areas). To achieve full cover, I employ two versions of the soil map: a 1:50,000 scale map that is considered definitive where coverage exists (mainly in eastern lowlands, where arable land is widespread) and a 1:250,000 scale map that provides lower resolution coverage in highlands areas not mapped by the 50k scale map. I calculate the share of each landscape grid cell that is occupied by a given class and determine the dominant class (>50\%) in each cell.
 
 \subsection{Weather}
 

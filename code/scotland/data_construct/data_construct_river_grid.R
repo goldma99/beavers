@@ -46,7 +46,7 @@ river_grid_sf <-
   rowid_to_column(var = "river_id") %>%
   mutate(on_river = !is.na(link_index)) %>%
   select(!link_index)
-  
+
 # Analysis ========================================
 
 # Output ==========================================

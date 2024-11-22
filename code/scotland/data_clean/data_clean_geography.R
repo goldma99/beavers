@@ -36,4 +36,3 @@ nuts_scotland %>%
   write_sf(
     file.path(path_data_clean, "geography", "nuts_scotland", "nuts_scotland.shp")
   )
-  

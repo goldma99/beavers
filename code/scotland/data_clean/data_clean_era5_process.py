@@ -72,9 +72,6 @@ if YEAR_AGG:
         .agg({"tp": "sum", "t2m": "mean", "lai_hv": "mean", "lai_lv": "mean"}) \
         .reset_index()
     
-    path_out_annual = os.path.join(path_era5_clean_y, "era5_tpv_annual.pqt")
+    path_out_annual = os.path.join(path_era5_clean_y, "era5_tpv_annual.parquet")
 
     era5_year_agg.to_parquet(path_out_annual)
-    
-
-    

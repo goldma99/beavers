@@ -42,7 +42,7 @@ def era5_aggregate_month(path):
     # lai: mean monthly
 
     era5_month_agg = era5_df \
-        .groupby(by=["cell_id", "year", "month"]) \
+        .groupby(by=["cell_id", "latitude", "longitude", "year", "month"]) \
         .agg({"tp": "sum", "t2m": "mean", "lai_hv": "mean", "lai_lv": "mean"})
     
     return era5_month_agg

@@ -49,6 +49,10 @@ global indep_vars beaver_d
 
 global fes twfe
 
+global control_sets weather_controls
+// global no_controls
+global weather_controls tp_mean t2m_mean
+
 ********************************************************************************
 // 1. Read in data -------------------------------------------------------------
 ********************************************************************************
@@ -66,47 +70,48 @@ foreach sample_cohort in $samples_cohort {
                 foreach indep_var in $indep_vars {
                     foreach fe in $fes {
                         foreach cl in river_id {
+                            foreach control_set in $control_sets {
+                                cwf S`sample_cohort'
 
-                            cwf S`sample_cohort'
+                                if "`sample_river'" == "all_cells" {
+                                    local sample_restriction 1 
+                                }
+                                else if "`sample_river'" == "river_cells" {
+                                    local sample_restriction on_river == 1
+                                }
+                                else {
+                                    di as error "Unsupported sample_river value: `sample_river'"
+                                    exit(198)
+                                }
 
-                            if "`sample_river'" == "all_cells" {
-                                local sample_restriction 1 
-                            }
-                            else if "`sample_river'" == "river_cells" {
-                                local sample_restriction on_river == 1
-                            }
-                            else {
-                                di as error "Unsupported sample_river value: `sample_river'"
-                                exit(198)
-                            }
+                                if "`sample_soil'" == "all_soil" {
+                                    local sample_restriction `sample_restriction' & 1
+                                }
+                                else {
+                                    local sample_restriction `sample_restriction' & lccd_mj_dom == "`sample_soil'"
+                                }
 
-                            if "`sample_soil'" == "all_soil" {
-                                local sample_restriction `sample_restriction' & 1
-                            }
-                            else {
-                                local sample_restriction `sample_restriction' & lccd_mj_dom == "`sample_soil'"
-                            }
+                                if "`fe'" == "twfe" {
+                                    local fe_set river_id t_`sample_cohort'
+                                }
+                                else {
+                                    di as error "Unsupported fe value: `fe'"
+                                }
+                                qui levelsof river_id if `sample_restriction', local(cell_ids)
 
-                            if "`fe'" == "twfe" {
-                                local fe_set river_id t_`sample_cohort'
-                            }
-                            else {
-                                di as error "Unsupported fe value: `fe'"
-                            }
-                            qui levelsof river_id if `sample_restriction', local(cell_ids)
+                                foreach cell_id in `cell_ids' {
+                                    reghdfe `dep_var' `indep_var' $`control_set' if `sample_restriction' & river_id != `cell_id', ///
+                                           absorb(`fe_set') ///
+                                           cluster(`cl') 
 
-                            foreach cell_id in `cell_ids' {
-                                reghdfe `dep_var' `indep_var' if `sample_restriction' & river_id != `cell_id', ///
-                                       absorb(`fe_set') ///
-                                       cluster(`cl') 
+                                    estadd ysumm
+                                    estadd local sample_cohort "`sample_cohort'"
+                                    estadd local sample_river  "`sample_river'"
+                                    estadd local sample_soil   "`sample_soil'"
+                                    estadd local omitted_cell  "`cell_id'"
 
-                                estadd ysumm
-                                estadd local sample_cohort "`sample_cohort'"
-                                estadd local sample_river  "`sample_river'"
-                                estadd local sample_soil   "`sample_soil'"
-                                estadd local omitted_cell  "`cell_id'"
-
-                                estimates save $path_data_est/jackknife/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'_jk`cell_id'.ster, replace
+                                    estimates save $path_data_est/jackknife/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_C`control_set'_FE`fe'_CL`cl'_jk`cell_id'.ster, replace
+                                }
                             }                            
                         }
                     }

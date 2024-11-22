@@ -57,6 +57,8 @@ global indep_vars beaver_d
 
 global fes twfe
 
+global control_sets weather_controls
+
 ********************************************************************************
 // 1. Read in data -------------------------------------------------------------
 ********************************************************************************
@@ -68,22 +70,24 @@ foreach sample_cohort in $samples_cohort {
                 foreach indep_var in $indep_vars {
                     foreach fe in $fes {
                         foreach cl in river_id {
+                            foreach control_set in $control_sets {
 
-                            cd $path_data_est_jackknife
+                                cd $path_data_est_jackknife
 
-                            gen omitted_cell = ""
-                            gen beta_beaver = .
+                                gen omitted_cell = ""
+                                gen beta_beaver = .
 
-                            qui fs est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'_jk*.ster
+                                qui fs est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_C`control_set'_FE`fe'_CL`cl'_jk*.ster
 
-                            foreach est_file in `r(files)' {
-                                insobs 1
-                                est use `est_file'
-                                local beta_beaver = e(b)[1, "beaver_d"]
-                                local omitted_cell = e(omitted_cell)
+                                foreach est_file in `r(files)' {
+                                    insobs 1
+                                    est use `est_file'
+                                    local beta_beaver = e(b)[1, "beaver_d"]
+                                    local omitted_cell = e(omitted_cell)
 
-                                replace omitted_cell = "`omitted_cell'" if _n == _N
-                                replace beta_beaver = `beta_beaver' if _n == _N
+                                    replace omitted_cell = "`omitted_cell'" if _n == _N
+                                    replace beta_beaver = `beta_beaver' if _n == _N
+                                }
                             }
                         }
                     }
@@ -93,27 +97,31 @@ foreach sample_cohort in $samples_cohort {
     }
 }        
 
-
+??
 ********************************************************************************
 // 2. Plot jackknife beta distribution -----------------------------------------
 ********************************************************************************
 
-est use $path_data_est/est_beaver_DVag_share_TVbeaver_d_Soverall_river_cells_AC_FEtwfe_CLriver_id.ster
+est use $path_data_est/est_beaver_DVag_share_TVbeaver_d_Soverall_river_cells_AC_Cweather_controls_FEtwfe_CLriver_id.ster
 local beta_main = e(b)[1, "beaver_d"]
+di `beta_main'
+local annotate_color 230 81 0 
 
 #delim ;
 twoway 
     (hist beta_beaver, 
-        color("96 125 139%80")    
+        percent
+        color("144 164 174%80")    
         lcolor(none))
-    (scatteri 0 `beta_main' 5000 `beta_main', c(l) m(i) lcolor("245 127 23") lwidth(medthick)),
+    (scatteri 0 `beta_main' 37.5 `beta_main', c(l) m(i) lcolor("`annotate_color'") lwidth(medthick)),
     plotregion(color(white))
     xtitle("Effect of beaver entry on agriculture share") 
+    text(36 0.0466 "Coefficient from" "full sample", color("`annotate_color'") justification(left))
     ytitle("")
     ylab(, angle(0))
     ysc(noextend)
     xsc(noextend)
-    subtitle("Density", position(11) size(medium))
+    subtitle("Percent", position(11) size(medium))
     legend(off);
 #delim cr
 

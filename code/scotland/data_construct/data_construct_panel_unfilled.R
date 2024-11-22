@@ -56,6 +56,13 @@ soil_lca_by_river_grid <-
   file.path("river_grid_dom_soil.pqt") %>%
   read_parquet()
 
+## Weather ==============
+weather_by_river_grid_year <-
+  path_data_clean_weather %>%
+  file.path("river_grid_weather_panel.pqt") %>%
+  read_parquet() %>%
+  setDT()
+
 # Clean data ======================================
 
 ## River grid ===================
@@ -98,19 +105,19 @@ hydrometry_ts_clean <-
                     stationparameter_name,
                     quality_code,
                     station_id)
-                ][,
-                  `:=`(year = year(ts_timestamp),
-                       month = month(ts_timestamp),
-                       ym = as_date(ts_timestamp),
-                       param = str_to_lower(stationparameter_name),
-                       ts_value = as.numeric(ts_value))
-                  ][
-                    year %in% 1990:2022
-                    ][,
-                      ts_name := str_to_lower(str_remove(ts_shortname, "^H"))
-                      ][,
-                      c("freq", "measure") := tstrsplit(ts_name, "\\.")
-                      ][]
+  ][,
+    `:=`(year = year(ts_timestamp),
+         month = month(ts_timestamp),
+         ym = as_date(ts_timestamp),
+         param = str_to_lower(stationparameter_name),
+         ts_value = as.numeric(ts_value))
+  ][
+    year %in% 1990:2022
+  ][,
+    ts_name := str_to_lower(str_remove(ts_shortname, "^H"))
+  ][,
+    c("freq", "measure") := tstrsplit(ts_name, "\\.")
+  ][]
 
 hydrometry_ts_gw <- hydrometry_ts_clean[param == "groundwaterlevel"]  
 hydrometry_ts_fl <- hydrometry_ts_clean[param == "flow"]
@@ -121,7 +128,7 @@ hydrometry_ts_lv_wide_month <-
     hydrometry_ts_lv,
     station_id + year + month ~ param + measure,
     value.var = "ts_value"
-    )
+  )
 
 hydrometry_ts_lv_wide <-
   hydrometry_ts_lv_wide_month[
@@ -129,7 +136,7 @@ hydrometry_ts_lv_wide <-
     .(level_max = max(level_max, na.rm = TRUE),
       level_mean = mean(level_mean, na.rm = TRUE)),
     by = .(station_id, year)
-    ]
+  ]
 
 hydrometry_ts_gw_wide <-
   hydrometry_ts_gw %>%
@@ -143,21 +150,21 @@ hydrometry_ts_fl_day_wide <-
   dcast(
     station_id + ym ~ param + measure,
     value.var = "ts_value"
-    )
+  )
 
 hydrometry_ts_fl_max <-
   hydrometry_ts_fl[
     freq == "year", 
     .(station_id, year, flow_max = ts_value)
-    ]
+  ]
 
 hydrometry_ts_fl_mean <-
   hydrometry_ts_fl_day_wide[,
                             year := year(ym)
-                            ][,
-                              .(flow_mean = mean(as.numeric(flow_mean), na.rm = TRUE)),
-                              by = .(station_id, year)
-                              ]
+  ][,
+    .(flow_mean = mean(as.numeric(flow_mean), na.rm = TRUE)),
+    by = .(station_id, year)
+  ]
 hydrometry_ts_fl_wide <-
   merge(
     hydrometry_ts_fl_max, 
@@ -180,13 +187,13 @@ hydrometry_by_river_grid_year <-
     across(
       ends_with("_mean"),
       ~ ifelse(all(is.na(.x)), NA, mean(.x, na.rm = TRUE))
-      ),
+    ),
     across(
       ends_with("_max"),
       ~ ifelse(all(is.na(.x)), NA, max(.x, na.rm = TRUE))
     )
   ) 
-  
+
 
 # Analysis ========================================
 
@@ -202,12 +209,13 @@ river_year_panel_complete <-
   ungroup() %>%
   setDT() %>%
   setkey(river_id, year)
- 
+
 river_year_panel_all_data <- 
   river_year_panel_complete %>%
   merge(ag_share_by_river_grid_year  , all = TRUE, by = c("river_id", "year")) %>%
   merge(beaver_by_river_grid_year    , all = TRUE, by = c("river_id", "year")) %>%
   merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year")) %>%
+  merge(weather_by_river_grid_year   , all = TRUE, by = c("river_id", "year")) %>%
   merge(elevation_by_river_grid      , all = TRUE, by = "river_id") %>%
   merge(soil_lca_by_river_grid       , all = TRUE, by = "river_id")
 
@@ -221,20 +229,20 @@ river_year_panel_all_data[,
                                                  year %in% 2012:2022, 1),
                                t_g2      = fcase(year %in% 1990:2000, 0,
                                                  year %in% 2017:2022, 1))
-                          ]
+]
 
 # Treatment groups 
 river_year_panel_all_data[,
                           treatment_year := first_year_treated(year, beaver_d),
                           by = "river_id"
-                          ]
+]
 
 river_year_panel_all_data[,
                           g := fcase(is.na(treatment_year) , 0,
                                      treatment_year == 2012, 1,
                                      treatment_year == 2017, 2,
                                      treatment_year == 2020, 3)
-                          ]
+]
 # Output ==========================================
 
 river_year_panel_all_data %>%

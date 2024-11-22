@@ -75,7 +75,7 @@ river_era5_weights <-
     overlap_area = st_area(.),
     weight = overlap_area / river_cell_area,
     weight = drop_units(weight)
-    ) %>% 
+  ) %>% 
   st_drop_geometry() %>%
   select(river_id, cell_id, weight)
 
@@ -85,7 +85,7 @@ river_weather_join <-
     era5_tpv_annual,
     by = "cell_id",
     relationship = "many-to-many"
-    ) %>%
+  ) %>%
   setDT()
 
 river_weather_panel <-
@@ -93,11 +93,11 @@ river_weather_panel <-
                      .(
                        tp_mean = weighted.mean(tp, weight, na.rm = TRUE),
                        t2m_mean = weighted.mean(t2m, weight, na.rm = TRUE)
-                       ),
+                     ),
                      by = .(river_id, year)
-                     ]
+  ]
 
 river_weather_panel %>%
   write_parquet(
-    file.path(path_data_clean, "weather", "river_grid_weather_panel.pqt")
+    file.path(path_data_clean_weather, "river_grid_weather_panel.pqt")
   )

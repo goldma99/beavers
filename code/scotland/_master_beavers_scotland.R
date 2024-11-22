@@ -73,6 +73,7 @@ path_data_clean_hydrometry <- file.path(path_data_clean, "hydrometry")
 path_data_clean_river      <- file.path(path_data_clean, "river_network")
 path_data_clean_lc         <- file.path(path_data_clean, "land_cover")
 path_data_clean_soil       <- file.path(path_data_clean, "soil")
+path_data_clean_weather    <- file.path(path_data_clean, "weather")
 
 path_output         <- file.path(path, "output")
 

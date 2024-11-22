@@ -36,31 +36,6 @@ river_grid_year_panel_unfilled <-
 
 # Clean data ======================================
 
-# ## Label periods and groups ===============
-# 
-# # Pre- and post-treatment periods
-# river_grid_year_panel_unfilled[,
-#                                `:=`(t_overall = fcase(year %in% 1990:2000, 0,
-#                                                       year %in% 2020:2022, 1),
-#                                     t_g1      = fcase(year %in% 1990:2000, 0,
-#                                                       year %in% 2012:2022, 1),
-#                                     t_g2      = fcase(year %in% 1990:2000, 0,
-#                                                       year %in% 2017:2022, 1))
-#                                ]
-# 
-# river_grid_year_panel_unfilled[,
-#                                treatment_year := first_year_treated(year, beaver_d),
-#                                by = "river_id"
-#                                ]
-# 
-# # Treatment groups 
-# river_grid_year_panel_unfilled[,
-#                                g := fcase(is.na(treatment_year) , 0,
-#                                           treatment_year == 2012, 1,
-#                                           treatment_year == 2017, 2,
-#                                           treatment_year == 2020, 3)
-#                                ]
-
 # Aggregate to grid-cell-by-t, with all covariates averaged
 sd_cols <- str_subset(names(river_grid_year_panel_unfilled), "_?mean_?|_max|ag_share")
 
@@ -137,6 +112,31 @@ river_grid_panel_2period_g1 <-
                                        ][,
                                          !..hydro_vars_to_drop
                                          ]
+
+## Drop 2012-treated =================
+#' @TODO
+# river_grid_panel_2period_g1 <-
+#   river_grid_year_panel_unfilled[!g %in% c(2, 3),
+#                                  c(.(g = unique(g),
+#                                      lccd_mj_dom = unique(lccd_mj_dom),
+#                                      soil_share_igrg = unique(soil_share_igrg),
+#                                      soil_share_nag = unique(soil_share_nag),
+#                                      soil_share_ac = unique(soil_share_ac),
+#                                      on_river = unique(on_river)),
+#                                    lapply(.SD, mean, na.rm = TRUE)),
+#                                  by = .(river_id, t_g1),
+#                                  .SDcols = sd_cols
+#   ][,
+#     (sd_cols) := map(.SD, ~ na_if(.x, NaN)),
+#     .SDcols = sd_cols
+#   ][
+#     !is.na(t_g1)
+#   ][,
+#     beaver_d := fcase(g == 0 | t_g1 == 0, 0,
+#                       default = 1)
+#   ][,
+#     !..hydro_vars_to_drop
+#   ]
 
 # Output ==========================================
 river_grid_panel_2period_overall %>%

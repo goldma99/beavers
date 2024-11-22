@@ -62,6 +62,13 @@ local sample_soil all_soil
 foreach sample_cohort in $samples_cohort {
     foreach control_set in $control_sets {
 
+        if "`control_set'" == "no_controls" {
+            local drop_vars _cons
+        }
+        else if "`control_set'" == "weather_controls" {
+            local drop_vars _cons tp_mean t2m_mean
+        }
+
         foreach sample_river in $samples_river {
 
             if "`sample_river'" == "all_cells" {
@@ -99,7 +106,7 @@ foreach sample_cohort in $samples_cohort {
                 mlabels(none)
                 collabels(none)
                 varlabels(beaver_d "Beaver Presence")
-                drop(_cons)
+                drop(`drop_vars')
                 starlevels(* 0.10 ** 0.05 *** 0.01)
                 prehead(\textbf{`panel_title'} \\\midrule)
                 posthead(\midrule)

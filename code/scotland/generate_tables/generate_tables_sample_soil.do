@@ -69,7 +69,14 @@ est clear
 
 foreach sample_cohort in $samples_cohort {
     foreach control_set in $control_sets {
-
+        
+        if "`control_set'" == "no_controls" {
+            local drop_vars _cons
+        }
+        else if "`control_set'" == "weather_controls" {
+            local drop_vars _cons tp_mean t2m_mean
+        }
+        
         est clear
 
         ** Read in regressions 
@@ -116,7 +123,7 @@ foreach sample_cohort in $samples_cohort {
             mlabels("All cells" "River cells" "All cells" "River cells" "All cells" "River cells" "All cells" "River cells")
             collabels(none)
             varlabels(beaver_d "Beaver Presence")
-            drop(_cons)
+            drop(`drop_vars')
             starlevels(* 0.10 ** 0.05 *** 0.01)
             prehead()
             posthead(& (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\ \midrule)

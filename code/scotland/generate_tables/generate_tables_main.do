@@ -179,7 +179,7 @@ foreach sample_cohort in $samples_cohort {
         texdoc close
     }
 }
-??
+
 ********************************************************************************
 // 2. Table with only ag-share outcome, with all samples -----------------------
 ********************************************************************************
@@ -233,7 +233,7 @@ estout C*_R* using "$path_tab_beaver_main/`filename_panel'.tex",
     local fe_note "grid cell and time period fixed effects."
     local sample_note "Samples vary by column."
     local cl_note "grid cell"
-    local control_note ""
+    local control_note "Regression includes average two-meter temperature and average total precipitation covariates"
 
     texdoc init "$path_tab_beaver_main/`filename_table'.tex", replace force
 
@@ -259,7 +259,7 @@ estout C*_R* using "$path_tab_beaver_main/`filename_panel'.tex",
     tex \justify 
     tex Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}. 
     tex Each regression includes `fe_note' 
-    tex `sample_note' 
+    tex `sample_note' `control_note'.
     tex Standard errors are clustered at the `cl_note' level.  \\
     tex \mbox{*} 0.10 ** 0.05 *** 0.01
     tex \end{tablenotes}             

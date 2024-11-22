@@ -59,6 +59,8 @@ global indep_vars beaver_d
 
 global fes twfe
 
+global control_sets no_controls weather_controls
+
 ********************************************************************************
 // 2. Table with only ag-share outcome, with all samples -----------------------
 ********************************************************************************
@@ -66,100 +68,105 @@ global fes twfe
 est clear
 
 foreach sample_cohort in $samples_cohort {
+    foreach control_set in $control_sets {
 
-    est clear
+        est clear
 
+        ** Read in regressions 
+        foreach sample_soil in $samples_soil {
+            foreach sample_river in $samples_river {
+                foreach dep_var in ag_share {
+                    foreach indep_var in $indep_vars {
+                        foreach fe in $fes {
+                            foreach cl in river_id {
 
-    ** Read in regressions 
-    foreach sample_soil in $samples_soil {
-        foreach sample_river in $samples_river {
-            foreach dep_var in ag_share {
-                foreach indep_var in $indep_vars {
-                    foreach fe in $fes {
-                        foreach cl in river_id {
-
-                            if "`sample_soil'" == "all_soil" {
-                                local soil_short all
-                            }
-                            else {
-                                local soil_short `sample_soil'
-                            }
-                            
-                            est use $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'.ster
-                            est sto C`sample_cohort'_R`sample_river'_S`soil_short'                        
-                        
+                                if "`sample_soil'" == "all_soil" {
+                                    local soil_short all
+                                }
+                                else {
+                                    local soil_short `sample_soil'
+                                }
+                                
+                                est use $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_C`control_set'_FE`fe'_CL`cl'.ster
+                                est sto C`sample_cohort'_R`sample_river'_S`soil_short'  
+                            }                   
                         }
                     }
                 }
             }
         }
+
+        local filename_panel "beaver_sample_soil_DVag_share_S`sample_cohort'_C`control_set'_panel"
+        local filename_table "beaver_sample_soil_DVag_share_S`sample_cohort'_C`control_set'_table"
+
+        #delim ;
+        estout * using "$path_tab_beaver_soil/`filename_panel'.tex",
+            cells(b(star fmt(3)) se(par fmt(3)))
+            label 
+            style(tex)
+            stats(N r2_within ymean,
+                  fmt(%9.0fc 3 3) 
+                  labels("\midrule Observations" "Within \(R^2\)" "Mean Dep. Var."))
+            mgroups("All Soil Types" "Arable" "Grassland" "Non Agri",
+                pattern(1 0 1 0 1 0 1 0)
+                span 
+                prefix(\multicolumn{@span}{c}{) 
+                suffix(})
+                erepeat(\cmidrule(lr){@span}))
+            mlabels("All cells" "River cells" "All cells" "River cells" "All cells" "River cells" "All cells" "River cells")
+            collabels(none)
+            varlabels(beaver_d "Beaver Presence")
+            drop(_cons)
+            starlevels(* 0.10 ** 0.05 *** 0.01)
+            prehead()
+            posthead(& (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\ \midrule)
+            prefoot() 
+            postfoot(\noalign{\smallskip})
+            replace;
+        #delim cr
+            
+        local fe_note "grid cell and time period fixed effects."
+        local sample_note "Samples vary by column."
+        local cl_note "grid cell"
+        if "`control_set'" == "no_controls" {
+            local control_note "Regression does not include temperature and precipitation covariates"
+        }
+        else if "`control_set'" == "weather_controls" {
+            local control_note "Regression includes average two-meter temperature and average total precipitation covariates"
+        }
+
+        texdoc init "$path_tab_beaver_soil/`filename_table'.tex", replace force
+
+        tex \begin{table}[htb]
+        tex \captionlistentry[table]{}
+        tex \label{table:beaver_sample_soil_S`sample_cohort'_C`control_set'} 
+        tex \centering             
+        tex Table \ref{table:beaver_sample_soil_S`sample_cohort'_C`control_set'} \\ 
+        tex Beaver impacts \\
+        tex \begin{threeparttable} 
+        tex \begin{tabulary}{\textwidth}{l*{9}{c}@{}} 
+        tex \toprule \toprule
+        tex \noalign{\smallskip}
+        tex \ExpandableInput{\tabPath/beaver_sample_soil/`filename_panel'.tex}
+        tex \noalign{\smallskip} 
+        tex \midrule \bottomrule 
+        tex \end{tabulary}             
+        tex \medskip             
+        tex \begin{tablenotes}[flushleft]             
+        tex \setlength\labelsep{0pt}             
+        tex \item             
+        tex \footnotesize 
+        tex \justify 
+        tex Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}. 
+        tex Each regression includes `fe_note' 
+        tex `sample_note' `control_note'.
+        tex Standard errors are clustered at the `cl_note' level.  \\
+        tex \mbox{*} 0.10 ** 0.05 *** 0.01
+        tex \end{tablenotes}             
+        tex \end{threeparttable}                 
+        tex \end{table}
+
+        texdoc close
     }
-
-    local filename_panel "beaver_sample_soil_DVag_share_S`sample_cohort'_panel"
-    local filename_table "beaver_sample_soil_DVag_share_S`sample_cohort'_table"
-
-    #delim ;
-    estout * using "$path_tab_beaver_soil/`filename_panel'.tex",
-        cells(b(star fmt(3)) se(par fmt(3)))
-        label 
-        style(tex)
-        stats(N r2_within ymean,
-              fmt(%9.0fc 3 3) 
-              labels("\midrule Observations" "Within \(R^2\)" "Mean Dep. Var."))
-        mgroups("All Soil Types" "Arable" "Grassland" "Non Agri",
-            pattern(1 0 1 0 1 0 1 0)
-            span 
-            prefix(\multicolumn{@span}{c}{) 
-            suffix(})
-            erepeat(\cmidrule(lr){@span}))
-        mlabels("All cells" "River cells" "All cells" "River cells" "All cells" "River cells" "All cells" "River cells")
-        collabels(none)
-        varlabels(beaver_d "Beaver Presence")
-        drop(_cons)
-        starlevels(* 0.10 ** 0.05 *** 0.01)
-        prehead()
-        posthead(& (1) & (2) & (3) & (4) & (5) & (6) & (5) & (6) & (7) & (8)\\ \midrule)
-        prefoot() 
-        postfoot(\noalign{\smallskip})
-        replace;
-    #delim cr
-        
-    local fe_note "grid cell and time period fixed effects."
-    local sample_note "Samples vary by column."
-    local cl_note "grid cell"
-
-    texdoc init "$path_tab_beaver_soil/`filename_table'.tex", replace force
-
-    tex \begin{table}[htb]
-    tex \captionlistentry[table]{}
-    tex \label{table:beaver_sample_soil_S`sample_cohort'} 
-    tex \centering             
-    tex Table \ref{table:beaver_sample_soil_S`sample_cohort'} \\ 
-    tex Beaver impacts \\
-    tex \begin{threeparttable} 
-    tex \begin{tabulary}{\textwidth}{l*{9}{c}@{}} 
-    tex \toprule \toprule
-    tex \noalign{\smallskip}
-    tex \ExpandableInput{\tabPath/beaver_sample_soil/`filename_panel'.tex}
-    tex \noalign{\smallskip} 
-    tex \midrule \bottomrule 
-    tex \end{tabulary}             
-    tex \medskip             
-    tex \begin{tablenotes}[flushleft]             
-    tex \setlength\labelsep{0pt}             
-    tex \item             
-    tex \footnotesize 
-    tex \justify 
-    tex Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}. 
-    tex Each regression includes `fe_note' 
-    tex `sample_note' 
-    tex Standard errors are clustered at the `cl_note' level.  \\
-    tex \mbox{*} 0.10 ** 0.05 *** 0.01
-    tex \end{tablenotes}             
-    tex \end{threeparttable}                 
-    tex \end{table}
-
-    texdoc close
-
 }
 

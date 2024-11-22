@@ -1,0 +1,31 @@
+\begin{table}[htb]
+\captionlistentry[table]{}
+\label{table:beaver_main_overall_no_controls}
+\centering
+Table \ref{table:beaver_main_overall_no_controls} \\
+Beaver impacts (all treated cohorts) \\
+\begin{threeparttable}
+\begin{tabulary}{\textwidth}{l*{5}{c}@{}}
+\toprule \toprule
+\noalign{\smallskip}
+& Share Agri. & River Level (mean) & River Level (max) & River Flow (mean) \\
+& (1) & (2) & (3) & (4) \\
+\ExpandableInput{\tabPath/beaver_main/beaver_main_Soverall_Cno_controls_all_cells_panel.tex}
+\ExpandableInput{\tabPath/beaver_main/beaver_main_Soverall_Cno_controls_river_cells_panel.tex}
+\noalign{\smallskip}
+\midrule \bottomrule
+\end{tabulary}
+\medskip
+\begin{tablenotes}[flushleft]
+\setlength\labelsep{0pt}
+\item
+\footnotesize
+\justify
+Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}.
+Each regression includes grid cell and time period fixed effects.
+Sample includes all treated cohorts in study region.. Regression does not include temperature and precipitation covariates.
+Standard errors are clustered at the grid cell level. \\
+\mbox{*} 0.10 ** 0.05 *** 0.01
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

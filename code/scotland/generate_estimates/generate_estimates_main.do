@@ -58,6 +58,10 @@ global indep_vars beaver_d
 
 global fes twfe
 
+global control_sets no_controls weather_controls
+global no_controls
+global weather_controls tp_mean t2m_mean
+
 ********************************************************************************
 // 1. Read in data -------------------------------------------------------------
 ********************************************************************************
@@ -79,44 +83,48 @@ foreach sample_cohort in $samples_cohort {
                 foreach indep_var in $indep_vars {
                     foreach fe in $fes {
                         foreach cl in river_id {
-                            
-                            cwf S`sample_cohort'
+                            foreach control_set in $control_sets {
 
-                            if "`sample_river'" == "all_cells" {
-                                local sample_restriction 1 
-                            }
-                            else if "`sample_river'" == "river_cells" {
-                                local sample_restriction on_river == 1
-                            }
-                            else {
-                                di as error "Unsupported sample_river value: `sample_river'"
-                                exit(198)
-                            }
+                                cwf S`sample_cohort'
 
-                            if "`sample_soil'" == "all_soil" {
-                                local sample_restriction `sample_restriction' & 1
-                            }
-                            else {
-                                local sample_restriction `sample_restriction' & lccd_mj_dom == "`sample_soil'"
-                            }
+                                if "`sample_river'" == "all_cells" {
+                                    local sample_restriction 1 
+                                }
+                                else if "`sample_river'" == "river_cells" {
+                                    local sample_restriction on_river == 1
+                                }
+                                else {
+                                    di as error "Unsupported sample_river value: `sample_river'"
+                                    exit(198)
+                                }
 
-                            if "`fe'" == "twfe" {
-                                local fe_set river_id t_`sample_cohort'
+                                if "`sample_soil'" == "all_soil" {
+                                    local sample_restriction `sample_restriction' & 1
+                                }
+                                else {
+                                    local sample_restriction `sample_restriction' & lccd_mj_dom == "`sample_soil'"
+                                }
+
+                                if "`fe'" == "twfe" {
+                                    local fe_set river_id t_`sample_cohort'
+                                }
+                                else {
+                                    di as error "Unsupported fe value: `fe'"
+                                }
+
+                                ** Regression ---------------------------------- 
+                                reghdfe `dep_var' `indep_var' $`control_set' if `sample_restriction', ///
+                                        absorb(`fe_set') ///
+                                        cluster(`cl')
+
+                                estadd ysumm
+                                estadd local sample_cohort "`sample_cohort'"
+                                estadd local sample_river  "`sample_river'"
+                                estadd local sample_soil   "`sample_soil'"
+                                estadd local control_set   "`control_set'"
+
+                                estimates save $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_C`control_set'_FE`fe'_CL`cl'.ster, replace
                             }
-                            else {
-                                di as error "Unsupported fe value: `fe'"
-                            }
-
-                            reghdfe `dep_var' `indep_var' if `sample_restriction', ///
-                                    absorb(`fe_set') ///
-                                    cluster(`cl')
-
-                            estadd ysumm
-                            estadd local sample_cohort "`sample_cohort'"
-                            estadd local sample_river  "`sample_river'"
-                            estadd local sample_soil   "`sample_soil'"
-
-                            estimates save $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_FE`fe'_CL`cl'.ster, replace
                         }
                     }
                 }

@@ -20,7 +20,7 @@
 ## Ag parishes in survey region ============
 ag_parish_in_survey <-
   path_data_clean_parish %>%
-  file.path("ag_parish_in_survey.shp") %>%
+  file.path("ag_parish_in_survey", "ag_parish_in_survey.shp") %>%
   read_sf()
 
 ## River ==================================
@@ -70,23 +70,25 @@ river_link_sf_clean <-
 
 # Convert river network to graph object ========================================
 
-river_vertices <-
-  river_node_sf_clean %>%
-  st_drop_geometry()
-
-river_edges <- 
-  river_link_sf_clean %>%
-  st_drop_geometry() %>%
-  select(from = start_node, to = end_node, edge_identifier = identifier) %>%
-  filter(
-    from %in% river_vertices$identifier,
-    to %in% river_vertices$identifier
-    )
-
-river_graph <-
-  river_edges %>%
-  graph_from_data_frame(directed = TRUE, vertices = river_vertices) %>%
-  as_tbl_graph()
+#' @Deprecated as I no longer am attempting to model the dispersion of beavers 
+#' along the river 'graph'
+# river_vertices <-
+#   river_node_sf_clean %>%
+#   st_drop_geometry()
+# 
+# river_edges <- 
+#   river_link_sf_clean %>%
+#   st_drop_geometry() %>%
+#   select(from = start_node, to = end_node, edge_identifier = id) %>%
+#   filter(
+#     from %in% river_vertices$id,
+#     to %in% river_vertices$id
+#     )
+# 
+# river_graph <-
+#   river_edges %>%
+#   graph_from_data_frame(directed = TRUE, vertices = river_vertices) %>%
+#   as_tbl_graph()
 
 # river_graph %>%
 #   activate(edges) %>%

@@ -17,12 +17,13 @@ set maxvar 32767
 set scheme s1mono
 set mem 70m
 
-confirmdir "C:/Users/mGold"
+confirmdir "D:/Dropbox/Research"
 if r(confirmdir) == "0" {
-  local rootDir = "C:/Users/mGold/Desktop"
+  local rootDir = "D:/Dropbox/Research/"
 }
 else {
-    di as error "C:/Users/mGold directory not found"
+    di as error "D:/Dropbox/Research directory not found"
+    exit 198
 }
 
 // File paths -------------------------------------

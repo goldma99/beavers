@@ -214,9 +214,9 @@ river_year_panel_all_data <-
   river_year_panel_complete %>%
   merge(ag_share_by_river_grid_year  , all = TRUE, by = c("river_id", "year")) %>%
   merge(beaver_by_river_grid_year    , all = TRUE, by = c("river_id", "year")) %>%
-  merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year")) %>%
+  #merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year")) %>%
   merge(weather_by_river_grid_year   , all = TRUE, by = c("river_id", "year")) %>%
-  merge(elevation_by_river_grid      , all = TRUE, by = "river_id") %>%
+  #merge(elevation_by_river_grid      , all = TRUE, by = "river_id") %>%
   merge(soil_lca_by_river_grid       , all = TRUE, by = "river_id")
 
 ## Label periods and groups ===============

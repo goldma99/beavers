@@ -21,6 +21,31 @@ path_code_scotland_data_clean %>%
 
 if (SOURCE_SCRIPTS) {
   
+  ## Clean geographical data ===================== 
+  path_code_scotland_data_clean %>%
+    file.path("data_clean_geography.R") %>%
+    source()
+  
+  ## Clean soil classification data ===================== 
+  path_code_scotland_data_clean %>%
+    file.path("data_clean_soil.R") %>%
+    source()
+  
+  ## Clean beaver survey data ==================
+  path_code_scotland_data_clean %>%
+    file.path("data_clean_beaver_scotland_survey.R") %>%
+    source()
+  
+  ## Clean land cover classification data ====================
+  path_code_scotland_data_clean %>% 
+    file.path("data_clean_land_cover.R") %>% 
+    source()
+  
+  ## Clean agriculture parish admin region data ==================
+  path_code_scotland_data_clean %>%
+    file.path("data_clean_ag_parishes.R") %>%
+    source()
+  
   ## Clean river network data ==================
   path_code_scotland_data_clean %>%
     file.path("data_clean_river_network.R") %>%

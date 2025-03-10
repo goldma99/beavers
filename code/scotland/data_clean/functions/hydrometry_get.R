@@ -60,7 +60,7 @@ check_response <- function(resp) {}
 hydrometry_parse <- function(resp) {
   resp %>%
     httr2::resp_body_html() %>%
-    rvest::html_table(header = 1) %>%
+    rvest::html_table(header = TRUE) %>%
     purrr::pluck(1)
 }
 

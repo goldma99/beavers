@@ -24,5 +24,5 @@ path_raster_year_list <-
 
 ## Determine the proportion of 1km grid cells that are classified as arable/horticulture
 path_raster_year_list %>%
-  pluck(10) %>%
+  #pluck(10) %>%
   walk(process_ukceh)

@@ -22,34 +22,45 @@ path_code_scotland_data_construct %>%
 if (SOURCE_SCRIPTS) {
   
   ## Construct balanced beaver expansion panel =================================
-  path_code_scotland_data_clean %>%
+  path_code_scotland_data_construct %>%
     file.path("data_construct_beaver_expansion.R") %>%
     source()
   
   ## Construct 1km^2 river grid cells ==========================================
-  path_code_scotland_data_clean %>%
+  path_code_scotland_data_construct %>%
     file.path("data_construct_river_grid.R") %>%
     source()
   
+  ## Determine dominant soil class in grid cells ===============================
+  path_code_scotland_data_construct %>%
+    file.path("data_construct_soil_in_grid.R") %>%
+    source()
+  
+  ## Assign weather conditions to grid cells ===============================
+  path_code_scotland_data_construct %>%
+    file.path("data_construct_era5_grid.R") %>%
+    source()
+  
   ## Aggregate agricultural land shares to river grid cells ====================
-  path_code_scotland_data_clean %>%
+  path_code_scotland_data_construct %>%
     file.path("data_construct_ag_land_share.R") %>%
     source()
   
   ## Aggregate elevation and slope to river grid cells =========================
-  path_code_scotland_data_clean %>%
+  path_code_scotland_data_construct %>%
     file.path("data_construct_dem.R") %>%
     source()
   
   ## Merge all data into a single panel ========================================
-  path_code_scotland_data_clean %>%
+  path_code_scotland_data_construct %>%
     file.path("data_construct_panel_unfilled.R") %>%
     source()
   
-  ## Fill in panel's missing beaver/land use/hydrometry values =================
-  path_code_scotland_data_clean %>%
-    file.path("data_construct_panel_filled.R") %>%
-    source()
+  #' @Deprecated   
+  # ## Fill in panel's missing beaver/land use/hydrometry values =================
+  # path_code_scotland_data_construct %>%
+  #   file.path("data_construct_panel_filled.R") %>%
+  #   source()
   
   
 }

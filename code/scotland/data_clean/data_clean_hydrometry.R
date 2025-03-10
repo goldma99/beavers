@@ -41,7 +41,7 @@ ag_parish_in_survey <-
 
 hydrometry_stations <- hydrometry_get("station")
 
-hydrometry_stations_sf <-
+ hydrometry_stations_sf <-
   hydrometry_stations %>%
   filter(!is.na(station_latitude)) %>%
   st_as_sf(

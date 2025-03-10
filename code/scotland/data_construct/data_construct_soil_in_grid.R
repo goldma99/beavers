@@ -82,9 +82,6 @@ grid_soil_share_wide <-
     values_fill = 0
   )
 
-
-
-
 # Output ==========================================
 grid_soil_share_wide %>%
   write_parquet(

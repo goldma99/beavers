@@ -26,6 +26,7 @@ library(lubridate)
 library(httr2)
 library(rvest)
 library(units)
+library(tictoc)
 
 library(haven)
 
@@ -43,7 +44,7 @@ library(tidygraph)
 library(ggraph)
 
 ## File system paths ====
-path <- "C:/Users/mGold/Desktop/beavers"
+path <- "D:/Dropbox/Research/beavers"
 
 path_code <- file.path(path, "code")
 
@@ -87,6 +88,9 @@ setwd(path)
 path_code_scotland_functions %>%
   dir_ls() %>%
   walk(source)
+
+## Record the project's data directories 
+tree_freeze(path, "data")
 
 # Run entire pipeline =====================
 

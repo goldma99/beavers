@@ -12,7 +12,7 @@
 sf::sf_use_s2(FALSE)
 
 ## Load packages ====
-library(leaflet)
+# library(leaflet)
 ## File system paths ====
 
 # Read in data ====================================

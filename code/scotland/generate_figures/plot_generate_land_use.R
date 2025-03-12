@@ -60,12 +60,13 @@ if (READ_DATA) {
     ) %>%
     read_parquet()
   
-  ## Panel: filled
-  river_grid_year_panel_filled <-
-    path_data_clean %>%
-    file.path("treatment", "river_grid_year_panel_filled.pqt") %>%
-    read_parquet() %>%
-    setDT()
+  #' @Deprecated
+  # ## Panel: filled
+  # river_grid_year_panel_filled <-
+  #   path_data_clean %>%
+  #   file.path("treatment", "river_grid_year_panel_filled.pqt") %>%
+  #   read_parquet() %>%
+  #   setDT()
   
 }
 
@@ -85,15 +86,18 @@ beavers_fig_args <-
     plot_lcm_in_study_area, "lcm_in_study_area.png", path_output_figures, 7, 7,
     plot_lcm_example_area, "lcm_example_area.pdf", path_output_figures, 10, 7,
     plot_lcm_agg_river_grid, "lcm_agg_river_grid.pdf", path_output_figures, 12, 7,
-    plot_outcome_pretrends, "outcome_pretrends.pdf", path_output_figures, 9, 7,
-    plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 9, 7,
+    #plot_outcome_pretrends, "outcome_pretrends.pdf", path_output_figures, 12, 7,
+    plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 12, 7,
     #plot_soil_lca_map, "soil_lca_map.pdf", path_output_figures, 12, 7,
     plot_soil_lca_map, "soil_lca_map.png", path_output_figures, 8, 7,
     plot_raw_spaghetti_ag_share_g2017, "raw_spaghetti_ag_share_g2017.pdf", path_output_figures, 12, 7
     ) 
+
 nrow(beavers_fig_args)
+
 ## Generate and save plots 
 beavers_fig_args %>%
-    slice(7) %>%
+  filter(str_detect(filename, "pretrends")) %>% 
+    #slice(7) %>%
     pwalk(ggsave_wrapper)
 

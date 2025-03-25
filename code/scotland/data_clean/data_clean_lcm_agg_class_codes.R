@@ -44,7 +44,17 @@ lcm_code_panel_clean <-
     class_clean = str_squish(class_clean)
   ) |>
   select(agg_class_clean, year, class_clean, class_no) |>
-  arrange(agg_class_clean, year, class_clean, class_no)
+  arrange(agg_class_clean, year, class_clean, class_no) |>
+  group_by(agg_class_clean) |>
+  mutate(
+    agg_class_no = cur_group_id()
+  ) |>
+  ungroup() |>
+  add_row(
+    year = c(1990, 2000, 2007, 2015, 2017:2022),
+    class_no = rep(0, 10),
+    agg_class_no = rep(NA, 10)
+  )
 
 # Output ==========================================
 

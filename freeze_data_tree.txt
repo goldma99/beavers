@@ -6,6 +6,7 @@
 {path}/data/data_clean/geography
 {path}/data/data_clean/geography/nuts_scotland
 {path}/data/data_clean/land_cover
+{path}/data/data_clean/land_cover/agg_class_crosswalk
 {path}/data/data_clean/land_cover/lcm_crop_to_study
 {path}/data/data_clean/land_cover/river_ag_share
 {path}/data/data_clean/river_network

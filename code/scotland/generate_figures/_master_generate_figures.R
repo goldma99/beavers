@@ -18,10 +18,8 @@ path_code_scotland_generate_figures %>%
   source_dir()
 
 
-
-
 ## Load font ====
-if (!"cmr" %in% sysfonts::font.families()) {
+if (!"cmr" %in% sysfonts::font_families()) {
   ## Font (Computer Modern) for plots ====
   wd <- setwd(tempdir())
   

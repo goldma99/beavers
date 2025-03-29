@@ -1,7 +1,5 @@
 plot_outcome_pretrends <- function() {
   
-  outcome_var <- "ag_share"
- 
   river_grid_year_panel_unfilled[!is.na(ag_share)] %>%
     filter(
       (g == 0) | 
@@ -18,8 +16,8 @@ plot_outcome_pretrends <- function() {
     
     ggplot(
       aes(
-        x = year, # factor(year),
-        y = .data[[outcome_var]],
+        x = year,
+        y = ag_share,
         group = g,
         color = g
         )

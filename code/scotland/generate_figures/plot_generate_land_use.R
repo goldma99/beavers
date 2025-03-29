@@ -90,14 +90,15 @@ beavers_fig_args <-
     plot_outcome_pretrends, "outcome_pretrends.png", path_output_figures, 12, 7,
     #plot_soil_lca_map, "soil_lca_map.pdf", path_output_figures, 12, 7,
     plot_soil_lca_map, "soil_lca_map.png", path_output_figures, 8, 7,
-    plot_raw_spaghetti_ag_share_g2017, "raw_spaghetti_ag_share_g2017.pdf", path_output_figures, 12, 7
+    plot_raw_spaghetti_ag_share_g2017, "raw_spaghetti_ag_share_g2017.pdf", path_output_figures, 12, 7,
+    plot_balance_by_cohort, "balance_by_cohort.pdf", path_output_figures, 14, 7
     ) 
 
 nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  filter(str_detect(filename, "pretrends")) %>% 
+  filter(str_detect(filename, "balance_by_cohort.pdf")) %>% 
     #slice(7) %>%
     pwalk(ggsave_wrapper)
 

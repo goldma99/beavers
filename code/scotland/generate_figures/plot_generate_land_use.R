@@ -21,6 +21,18 @@ if (READ_DATA) {
     file.path("lcm_crop_to_study", "lcm_crop_to_study_y2022.tif") %>%
     terra::rast()
   
+  ## 
+  path_raster_year_list <-
+    path_data_scotland_ukceh %>%
+    dir_ls() %>%
+    purrr::set_names(~str_extract(.x, "Land Cover Map (\\d{4}) ", group = 1)) %>%
+    sort() %>%
+    dir_ls(recurse = TRUE, glob = "*.tif$")
+  
+  rast_list <-
+    path_raster_year_list |>
+    map(read_ukceh)
+  
   ## LCM aggregated to river grid cells
   river_ag_share_y2022 <-
     path_data_clean_lc %>% 
@@ -38,6 +50,15 @@ if (READ_DATA) {
     path_data_clean_river %>%
     file.path("river_grid", "river_grid.shp") %>%
     read_sf()
+  
+  ## Raw river course
+  river_link_sf <-
+    path_data_clean_river %>%
+    file.path(
+      "scotland_river_links",
+      "scotland_river_links.shp"
+    )  %>%
+    vect()
   
   ## Ag parishes
   ag_parish_in_survey <-
@@ -59,15 +80,7 @@ if (READ_DATA) {
       "river_grid_year_panel_unfilled.pqt"
     ) %>%
     read_parquet()
-  
-  #' @Deprecated
-  # ## Panel: filled
-  # river_grid_year_panel_filled <-
-  #   path_data_clean %>%
-  #   file.path("treatment", "river_grid_year_panel_filled.pqt") %>%
-  #   read_parquet() %>%
-  #   setDT()
-  
+
 }
 
 # Plot generation ========================================

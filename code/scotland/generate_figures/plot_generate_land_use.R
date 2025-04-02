@@ -21,16 +21,19 @@ if (READ_DATA) {
     file.path("lcm_crop_to_study", "lcm_crop_to_study_y2022.tif") %>%
     terra::rast()
   
-  ## 
-  path_raster_year_list <-
+  ## Beaver survey points 
+  beaver_survey <-
+    path_data_clean_beaver %>%
+    file.path("beaver_survey.pqt") %>% 
+    read_parquet()
+
+  ## land use classification at original resolution 
+  lcm_25m_rast_list <-
     path_data_scotland_ukceh %>%
     dir_ls() %>%
     purrr::set_names(~str_extract(.x, "Land Cover Map (\\d{4}) ", group = 1)) %>%
     sort() %>%
-    dir_ls(recurse = TRUE, glob = "*.tif$")
-  
-  rast_list <-
-    path_raster_year_list |>
+    dir_ls(recurse = TRUE, glob = "*.tif$") %>% 
     map(read_ukceh)
   
   ## LCM aggregated to river grid cells
@@ -104,14 +107,15 @@ beavers_fig_args <-
     #plot_soil_lca_map, "soil_lca_map.pdf", path_output_figures, 12, 7,
     plot_soil_lca_map, "soil_lca_map.png", path_output_figures, 8, 7,
     plot_raw_spaghetti_ag_share_g2017, "raw_spaghetti_ag_share_g2017.pdf", path_output_figures, 12, 7,
-    plot_balance_by_cohort, "balance_by_cohort.pdf", path_output_figures, 14, 7
+    plot_balance_by_cohort, "balance_by_cohort.pdf", path_output_figures, 14, 7,
+    plot_lcm_25m_time_series, "lcm_25m_time_series.png", path_output_figures, 12, 5
     ) 
 
 nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  filter(str_detect(filename, "balance_by_cohort.pdf")) %>% 
+  filter(str_detect(filename, "lcm_25m_time_series")) %>% 
     #slice(7) %>%
     pwalk(ggsave_wrapper)
 

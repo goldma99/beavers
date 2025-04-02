@@ -1,10 +1,5 @@
 plot_lcm_25m_time_series <- function() {
   
-  beaver_survey <-
-    path_data_clean_beaver %>%
-    file.path("beaver_survey.pqt") %>% 
-    read_parquet()
-  
   beaver_survey_sf <-
     beaver_survey %>%
     st_as_sf(
@@ -13,34 +8,34 @@ plot_lcm_25m_time_series <- function() {
     ) %>% 
     vect()
   
-  grid_cell_candidates <-
-    river_grid_year_panel_unfilled |> 
-    group_by(river_id) %>% 
-    summarise(
-      ag_share_1990 = ag_share[year == 1990],
-      ag_share_2022 = ag_share[year == 2022],
-      ag_share_increased = ag_share_2022 > ag_share_1990,
-      on_river = unique(on_river),
-      g = unique(g)
-    ) %>% 
-    filter(
-      g > 0 & ag_share_increased,
-      on_river,
-      !(ag_share_1990 == 0 & ag_share_2022 == 0),
-      !(ag_share_1990 == ag_share_2022),
-    ) %>% 
-    mutate(diff = ag_share_2022 - ag_share_1990)
-  
-  grid_cell_candidates %>% 
-    arrange(desc(diff)) %>% 
-    print(n = nrow(.))
+  # grid_cell_candidates <-
+  #   river_grid_year_panel_unfilled |> 
+  #   group_by(river_id) %>% 
+  #   summarise(
+  #     ag_share_1990 = ag_share[year == 1990],
+  #     ag_share_2022 = ag_share[year == 2022],
+  #     ag_share_increased = ag_share_2022 > ag_share_1990,
+  #     on_river = unique(on_river),
+  #     g = unique(g)
+  #   ) %>% 
+  #   filter(
+  #     g > 0 & ag_share_increased,
+  #     on_river,
+  #     !(ag_share_1990 == 0 & ag_share_2022 == 0),
+  #     !(ag_share_1990 == ag_share_2022),
+  #   ) %>% 
+  #   mutate(diff = ag_share_2022 - ag_share_1990)
+  # 
+  # grid_cell_candidates %>% 
+  #   arrange(desc(diff)) %>% 
+  #   print(n = nrow(.))
   
   example_cell <-
     river_grid %>% 
     filter(river_id == 8050) %>% 
     terra::vect()
   
-  rast_cropped <- map(rast_list, ~crop(.x, example_cell))
+  rast_cropped <- map(lcm_25m_rast_list, ~crop(.x, example_cell))
   rast_reclass <- map(rast_cropped, classify_agg_ukceh)
   rast_c       <- reduce(rast_reclass, c)
   
@@ -58,7 +53,8 @@ plot_lcm_25m_time_series <- function() {
         2 ~ "Woodland",
         3 ~ "Built",
         NA ~ "Other"
-        )
+        ),
+      lcm = fct_relevel(lcm, "Other", after = Inf)
       )
   
   river_in_cell <-
@@ -80,30 +76,22 @@ plot_lcm_25m_time_series <- function() {
     )
   
   ggplot() +
-    geom_sf(data = river_in_cell) +
-    geom_sf(data = beaver_in_cell, 
-            aes(color = factor(effective_survey_year)),
-            )
-  
-  
-  # 
-  # leaflet(data = project(example_cell, "epsg:4326")) %>% 
-  #   addTiles() %>% 
-  #   addPolygons()
-  
-  ggplot() +
     
     geom_tile(data = rast_lcm_panel, aes(x, y, fill = lcm), color = "white") +
     
     geom_sf(data = river_in_cell, linewidth = 2, color = "white") +
-    geom_sf(data = river_in_cell, linewidth = 1, color = "darkblue") +
+    geom_sf(data = river_in_cell, linewidth = 0.75, color = "#3182bd") +
     
-    geom_sf(data = beaver_in_cell) +
+    
+    geom_sf(data = beaver_in_cell, 
+            color = "#d95f0e",
+            size = 1.25,
+            alpha = 1) +
     
     scale_fill_manual(
       values = c(
-        "Agriculture" = "#FFD54F",
-        "Woodland" = "#2b7f1a",#  "#1B5E20",
+        "Agriculture" = "#ffcf33",
+        "Woodland" = "#addd8e",#  "#1B5E20",
         "Built" = "grey15", #"#607D8B",
         "Other" = "grey90"
       )
@@ -123,22 +111,23 @@ plot_lcm_25m_time_series <- function() {
       legend.position = "right",
       panel.grid = element_blank(),
       axis.title = element_blank(),
-      axis.text = element_blank()
+      axis.text = element_blank(),
+      plot.background = element_rect(color = NA, fill = "white")
     )
-
 }
 
-read_ukceh <- function(path) {
+classify_agg_ukceh <- function(rast) {
   
-  year <- str_extract(path, "Map (\\d{4})", group = 1)
+  stopifnot(length(names(rast))==1)
   
-  rast_obj        <- terra::rast(path)
-  land_class_band <- names(rast_obj)[1]
-  rast_lc_band    <- rast_obj[[land_class_band]]
-  rast_trim <- terra::trim(rast_lc_band)
+  .year <- names(rast)
   
-  names(rast_trim) <- year
+  lcm_replace_mat <- 
+    lcm_class_crosswalk[
+      year == .year, 
+      .(class_no, agg_class_no)
+    ]
   
-  return(rast_trim)
+  classify(rast, lcm_replace_mat)
   
 }

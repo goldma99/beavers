@@ -1,11 +1,12 @@
 # ---------------------------------------------------------------------------- #
 #' 
 #' Description: Calculate proportion of river grid cells that are classified 
-#'              as agricultural land use
+#'              as agricultural land use (and also every other land use class, 
+#'              separately)
 #' Author: Miriam Gold
 #' Date: 16 Sept 2024
-#' Last revised: 17 Sept 2024, mag
-#' Notes: notes
+#' Last revised: 2 April 2025, mag
+#' Notes: 
 #' 
 # ---------------------------------------------------------------------------- #
 

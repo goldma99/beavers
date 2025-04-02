@@ -37,12 +37,21 @@ hydrometry_ts <-
   setDT()
 
 ## Land use =====================
-ag_share_by_river_grid_year <-
-  path_data_clean_lc %>%
-  file.path("river_ag_share") %>%
-  dir_ls(glob = "*.pqt") %>%
-  map_dfr(read_parquet) %>%
+
+lcm_share_by_river_grid_year <-
+  path_data_clean_lc %>% 
+  file.path("grid1km_lcm_shares") %>% 
+  dir_ls(glob = "*.pqt") %>% 
+  map_dfr(read_parquet) %>% 
   setDT()
+
+#' @Deprecated in favor of all-LC shares version (share ag, share urban, etc.)
+# ag_share_by_river_grid_year <-
+#   path_data_clean_lc %>%
+#   file.path("river_ag_share") %>%
+#   dir_ls(glob = "*.pqt") %>%
+#   map_dfr(read_parquet) %>%
+#   setDT()
 
 ## Elevation and slope ============
 elevation_by_river_grid <-
@@ -212,7 +221,7 @@ river_year_panel_complete <-
 
 river_year_panel_all_data <- 
   river_year_panel_complete %>%
-  merge(ag_share_by_river_grid_year  , all = TRUE, by = c("river_id", "year")) %>%
+  merge(lcm_share_by_river_grid_year  , all = TRUE, by = c("river_id", "year")) %>%
   merge(beaver_by_river_grid_year    , all = TRUE, by = c("river_id", "year")) %>%
   #merge(hydrometry_by_river_grid_year, all = TRUE, by = c("river_id", "year")) %>%
   merge(weather_by_river_grid_year   , all = TRUE, by = c("river_id", "year")) %>%

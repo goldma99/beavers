@@ -37,6 +37,11 @@ if (SOURCE_SCRIPTS) {
     source()
   
   ## Clean land cover classification data ====================
+  
+  path_code_scotland_data_clean %>% 
+    file.path("data_clean_lcm_agg_class_codes.R") %>% 
+    source()
+  
   path_code_scotland_data_clean %>% 
     file.path("data_clean_land_cover.R") %>% 
     source()

@@ -11,6 +11,16 @@
 
 # Read in data ====================================
 
+## Aggregate land use class crosswalk ==============
+lcm_class_crosswalk <-
+  path_data_clean_lc %>%
+  file.path(
+    "agg_class_crosswalk",
+    "agg_class_crosswalk.csv"
+    ) %>% 
+  read_csv() %>% 
+  setDT()
+
 ## River grid cell polygons ==========
 river_grid_vector <-
   path_data_clean_river %>% 
@@ -23,7 +33,7 @@ path_raster_year_list <-
   dir_ls(recurse = TRUE, glob = "*.tif$")
 
 # Calculate agricultural land share by river grid cell ================
-lcm_years <- c(1990, 2000, 2007, 2015, 2017:2019)
+lcm_years <- c(2007, 2015, 2017:2022) #1990, 2000,  
 
 # lcm_years <- 2020:2022
 

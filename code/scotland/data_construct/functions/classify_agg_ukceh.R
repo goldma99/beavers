@@ -1,6 +1,7 @@
 classify_agg_ukceh <- function(rast) {
   
   stopifnot(length(names(rast))==1)
+  stopifnot(inherits(lcm_class_crosswalk, "data.table"))
   
   .year <- names(rast)
   

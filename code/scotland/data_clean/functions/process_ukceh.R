@@ -7,7 +7,9 @@ process_ukceh <- function(path) {
   message("Trying: ", year)
   
   rast_ukceh <- read_ukceh(path)
-  rast_agg   <- agg_ukceh(rast_ukceh)
+  rast_ukceh_agg <- classify_agg_ukceh(rast_ukceh)
+  
+  rast_agg   <- agg_ukceh(rast_ukceh_agg)
   
   writeRaster(rast_agg, out_path, overwrite = TRUE)
   
@@ -15,20 +17,22 @@ process_ukceh <- function(path) {
   
 }
 
-read_ukceh <- function(path) {
-  
-  year <- str_extract(path, "Map (\\d{4})", group = 1)
-  
-  rast_obj        <- terra::rast(path)
-  land_class_band <- names(rast_obj)[1]
-  rast_lc_band    <- rast_obj[[land_class_band]]
-  rast_trim <- terra::trim(rast_lc_band)
-  
-  names(rast_trim) <- year
-  
-  return(rast_trim)
-  
-}
+#' @Moved to `code/scotland/functions/` because it gets used by multiple 
+#' blocks
+# read_ukceh <- function(path) {
+#   
+#   year <- str_extract(path, "Map (\\d{4})", group = 1)
+#   
+#   rast_obj        <- terra::rast(path)
+#   land_class_band <- names(rast_obj)[1]
+#   rast_lc_band    <- rast_obj[[land_class_band]]
+#   rast_trim <- terra::trim(rast_lc_band)
+#   
+#   names(rast_trim) <- year
+#   
+#   return(rast_trim)
+#   
+# }
 
 agg_ukceh <- function(rast) {
   
@@ -43,7 +47,7 @@ agg_ukceh <- function(rast) {
   rast_agg <- 
     terra::aggregate(
       rast,
-      # Aggregate by a factor of 40 (25m * 40 = 1000m = 1km) to match river grid size
+      # Aggregate by a factor of 40 (25m * 40 = 1km) to match river grid size
       fact = 40,
       fun = agg_fn
     )

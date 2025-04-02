@@ -10,6 +10,16 @@
 
 # Read in data ====================================
 
+## Granular to aggregate, temporally consistent land use class ======
+lcm_class_crosswalk <- 
+  path_data_clean_lc %>% 
+  file.path(
+    "agg_class_crosswalk",
+    "agg_class_crosswalk.csv"
+    ) %>% 
+  read_csv() %>% 
+  setDT()
+
 ## List of all LCM raster file paths ================ 
 path_raster_year_list <-
   path_data_scotland_ukceh %>%

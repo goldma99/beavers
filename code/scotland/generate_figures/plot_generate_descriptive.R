@@ -9,20 +9,18 @@
 #' 
 # ---------------------------------------------------------------------------- #
 
-
-
 # Should we re-load the input datasets below? FALSE saves time if not needed
-READ_DATA <- FALSE 
+READ_DATA <- FALSE
 
 # Read in data ====================================
 
 if (READ_DATA) {
-  path_dl <- "C:/Users/goldm/Downloads"
+  
   ## Animals translocations ========================================
-  animal_transloc_raw <-
-    animal_transloc_raw <- 
-    path_dl |>
+  animal_transloc_raw <- 
+    path_data_clean |>
     file.path(
+      "descriptive",
       "query_20250314.csv"
     ) |>
     read_csv()
@@ -32,8 +30,9 @@ if (READ_DATA) {
   #'        Fig 1d, using https://plotdigitizer.com/app
   #' @Source: Godefroid et al. (2025)        
   plant_transloc_raw <-
-    path_dl |>
+    path_data_clean |>
     file.path(
+      "descriptive",
       "plant_transloc_by_decade_digitized.csv"
     ) |>
     read_csv()
@@ -52,14 +51,16 @@ beavers_fig_args <-
   tribble(
     ~plot_fn, ~filename, ~path, ~width, ~height,
     plot_transloc_animal, "plot_transloc_animal.pdf", path_output_figures, 12, 7,
-    plot_transloc_plant , "plot_transloc_plant.pdf" , path_output_figures, 12, 7
+    plot_transloc_plant , "plot_transloc_plant.pdf" , path_output_figures, 12, 7,
+    plot_beaver_territory_change, "beaver_territory_change.pdf", path_output_figures, 12, 7,
+    plot_treatment_periods, "treatment_periods.pdf", path_output_figures, 11, 2.5
   ) 
 
 nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  #filter(str_detect(filename, "pretrends")) %>% 
+  filter(str_detect(filename, "treatment_periods.pdf")) %>% 
   #slice(7) %>%
   pwalk(ggsave_wrapper)
 

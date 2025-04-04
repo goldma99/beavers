@@ -41,7 +41,7 @@ ag_parish_in_survey <-
 
 hydrometry_stations <- hydrometry_get("station")
 
- hydrometry_stations_sf <-
+hydrometry_stations_sf <-
   hydrometry_stations %>%
   filter(!is.na(station_latitude)) %>%
   st_as_sf(
@@ -157,11 +157,11 @@ survey_stations_ts_values_clean <-
 ## Stations in survey area with level measurements: metadata
 survey_stations_ts_metadata_clean %>%
   write_csv(
-    file.path(path_data_clean_hydrometry, "survey_stations_ts_metadata.csv")
+    file.path(path_data_hydrometry, "survey_stations_ts_metadata.csv")
     )
 
 ## Stations in survey area with level measurements: data values
 survey_stations_ts_values_clean %>%
   write_parquet(
-    file.path(path_data_clean_hydrometry, "survey_stations_ts_values.parquet")
+    file.path(path_data_hydrometry, "survey_stations_ts_values.parquet")
     )

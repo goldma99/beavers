@@ -58,7 +58,7 @@ path_code_scotland_generate_figures   <- file.path(path_code_scotland, "generate
 path_code_scotland_generate_tables    <- file.path(path_code_scotland, "generate_tables")
 path_code_scotland_generate_reports   <- file.path(path_code_scotland, "generate_reports")
 
-path_data <- file.path("H:/")
+path_data <- file.path("H:")
 
 path_data_scotland             <- file.path(path_data, "beavers_scotland")
 path_data_scotland_survey      <- file.path(path_data_scotland, "beaver-survey", "beaver-scotland-survey")
@@ -66,6 +66,7 @@ path_data_scotland_river       <- file.path(path_data_scotland, "river-network")
 path_data_scotland_parish      <- file.path(path_data_scotland, "ag-parishes")
 path_data_scotland_ukceh       <- file.path(path_data_scotland, "ukceh")
 path_data_scotland_soil       <- file.path(path_data_scotland, "soil")
+path_data_hydrometry          <- file.path(path_data_scotland, "hydrometry") 
 
 
 path_data_clean            <- file.path(path, "data", "data_clean")
@@ -76,6 +77,7 @@ path_data_clean_river      <- file.path(path_data_clean, "river_network")
 path_data_clean_lc         <- file.path(path_data_clean, "land_cover")
 path_data_clean_soil       <- file.path(path_data_clean, "soil")
 path_data_clean_weather    <- file.path(path_data_clean, "weather")
+path_data_clean_treatment  <- file.path(path_data_clean, "treatment")
 
 path_output         <- file.path(path, "output")
 

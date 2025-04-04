@@ -3,8 +3,10 @@
 {path}/data/data_clean/ag_parishes/ag_parish_in_survey
 {path}/data/data_clean/beaver_survey
 {path}/data/data_clean/beaver_survey/beaver_survey_bbox
+{path}/data/data_clean/descriptive
 {path}/data/data_clean/geography
 {path}/data/data_clean/geography/nuts_scotland
+{path}/data/data_clean/hydrometry
 {path}/data/data_clean/land_cover
 {path}/data/data_clean/land_cover/agg_class_crosswalk
 {path}/data/data_clean/land_cover/grid1km_lcm_shares
@@ -12,9 +14,11 @@
 {path}/data/data_clean/land_cover/ZZZ_river_ag_share
 {path}/data/data_clean/river_network
 {path}/data/data_clean/river_network/river_grid
+{path}/data/data_clean/river_network/river_year_panel_complete
 {path}/data/data_clean/river_network/scotland_river_links
 {path}/data/data_clean/river_network/scotland_river_nodes
 {path}/data/data_clean/soil
 {path}/data/data_clean/soil/soil_lca
 {path}/data/data_clean/treatment
 {path}/data/data_clean/weather
+{path}/data/estimates

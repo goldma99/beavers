@@ -50,10 +50,19 @@ global samples_soil ///
        NAG
 
 global dep_vars ///
-       ag_share ///
+       is_land_class_1 ///
+       is_land_class_2 ///
+       is_land_class_3 ///
+       is_land_class_4 ///
+       is_land_class_5 ///
+       is_land_class_6 ///
+       is_land_class_7 ///
+       is_land_class_8 ///
+       is_land_class_9 ///
+       is_land_class_10 /*///
        level_mean ///
        level_max ///
-       flow_mean
+       flow_mean*/
 
 global indep_vars beaver_d
 

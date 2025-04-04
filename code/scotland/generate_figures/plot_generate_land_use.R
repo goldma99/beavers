@@ -115,7 +115,7 @@ nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  filter(str_detect(filename, "lcm_25m_time_series")) %>% 
+  filter(str_detect(filename, "outcome_pretrends.png")) %>% 
     #slice(7) %>%
     pwalk(ggsave_wrapper)
 

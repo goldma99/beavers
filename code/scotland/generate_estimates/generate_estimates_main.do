@@ -35,13 +35,18 @@ global path_data_est       "$path_data/estimates"
 
 // Regression globals -------------------------------------------
 global samples_cohort ///
-       overall ///
+       g1 ///
        g2 ///
-       g1
+       g3 ///
+       g12 ///
+       g13 ///
+       g23 ///
+       g123
 
 global samples_river ///
        all_cells ///
-       river_cells
+       river_cells ///
+       non_river_cells
 
 global samples_soil ///
        all_soil ///
@@ -59,10 +64,10 @@ global dep_vars ///
        is_land_class_7 ///
        is_land_class_8 ///
        is_land_class_9 ///
-       is_land_class_10 /*///
+       is_land_class_10 ///
        level_mean ///
        level_max ///
-       flow_mean*/
+       flow_mean
 
 global indep_vars beaver_d
 
@@ -79,7 +84,7 @@ global weather_controls tp_mean t2m_mean
 foreach sample_cohort in $samples_cohort {
     mkf S`sample_cohort'
     cwf S`sample_cohort'
-    use $path_data_treatment/river_grid_panel_2period_`sample_cohort'
+    use $path_data_treatment/grid_panel_2period_`sample_cohort'
 }
 
 ********************************************************************************
@@ -103,6 +108,9 @@ foreach sample_cohort in $samples_cohort {
                                 else if "`sample_river'" == "river_cells" {
                                     local sample_restriction on_river == 1
                                 }
+                                else if "`sample_river'" == "non_river_cells" {
+                                    local sample_restriction on_river == 0
+                                }
                                 else {
                                     di as error "Unsupported sample_river value: `sample_river'"
                                     exit(198)
@@ -116,16 +124,21 @@ foreach sample_cohort in $samples_cohort {
                                 }
 
                                 if "`fe'" == "twfe" {
-                                    local fe_set river_id t_`sample_cohort'
+                                    local fe_set river_id t
                                 }
                                 else {
                                     di as error "Unsupported fe value: `fe'"
                                 }
 
                                 ** Regression ---------------------------------- 
-                                reghdfe `dep_var' `indep_var' $`control_set' if `sample_restriction', ///
-                                        absorb(`fe_set') ///
-                                        cluster(`cl')
+                                capture noisily {
+                                 reghdfe `dep_var' `indep_var' $`control_set' if `sample_restriction', ///
+                                         absorb(`fe_set') ///
+                                         cluster(`cl')   
+                                }
+                                if _rc != 0 {
+                                    continue
+                                }
 
                                 estadd ysumm
                                 estadd local sample_cohort "`sample_cohort'"

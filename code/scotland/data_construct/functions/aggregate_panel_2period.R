@@ -38,7 +38,13 @@ aggregate_panel_2period <- function(data, ...) {
                          map(.SD[, mean_cols  , with = FALSE], ~ mean(.x, na.rm = TRUE))
                          ),
                        by = .(river_id, t)
-                       ]
+                       ][, 
+                         beaver_d := fifelse(
+                           g == 0 | t == 0,
+                           0,
+                           1
+                           )
+                         ][]
   
   return(panel_2period)
   

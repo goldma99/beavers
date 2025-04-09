@@ -34,21 +34,27 @@ global path_tab_beaver_main "$path/output/tables/beaver_main"
 
 // Regression globals -------------------------------------------
 global samples_cohort ///
-       overall ///
-       g2 ///
        g1
+       g2
+       g3
+       g12
+       g13
+       g23
+       g123
 
 global samples_river ///
        all_cells ///
-       river_cells
+       river_cells ///
+       non_river_cells
 
 global samples_soil all_soil
 
 global dep_vars ///
-       is_land_class_1/* ///
+       is_land_class_1 ///
+       is_land_class_3 ///
        level_mean ///
        level_max ///
-       flow_mean*/
+       flow_mean
 
 global indep_vars beaver_d
 

@@ -28,6 +28,9 @@ library(rvest)
 library(units)
 library(tictoc)
 library(googlesheets4)
+library(furrr)
+library(cowplot)
+library(patchwork)
 
 library(haven)
 
@@ -78,6 +81,8 @@ path_data_clean_lc         <- file.path(path_data_clean, "land_cover")
 path_data_clean_soil       <- file.path(path_data_clean, "soil")
 path_data_clean_weather    <- file.path(path_data_clean, "weather")
 path_data_clean_treatment  <- file.path(path_data_clean, "treatment")
+
+path_data_est <- file.path(path, "data", "estimates")
 
 path_output         <- file.path(path, "output")
 

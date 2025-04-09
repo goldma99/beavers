@@ -36,14 +36,13 @@ river_grid_year_panel_unfilled <-
 
 # Clean data ======================================
 
-
-panel_2period_g1   <- aggregate_panel_2period(river_year_panel_all_data, 1)
-panel_2period_g2   <- aggregate_panel_2period(river_year_panel_all_data, 2)
-panel_2period_g3   <- aggregate_panel_2period(river_year_panel_all_data, 3)
-panel_2period_g12  <- aggregate_panel_2period(river_year_panel_all_data, 1, 2)
-panel_2period_g13  <- aggregate_panel_2period(river_year_panel_all_data, 1, 3)
-panel_2period_g23  <- aggregate_panel_2period(river_year_panel_all_data, 2, 3)
-panel_2period_g123 <- aggregate_panel_2period(river_year_panel_all_data, 1, 2, 3)
+panel_2period_g1   <- aggregate_panel_2period(river_grid_year_panel_unfilled, 1)
+panel_2period_g2   <- aggregate_panel_2period(river_grid_year_panel_unfilled, 2)
+panel_2period_g3   <- aggregate_panel_2period(river_grid_year_panel_unfilled, 3)
+panel_2period_g12  <- aggregate_panel_2period(river_grid_year_panel_unfilled, 1, 2)
+panel_2period_g13  <- aggregate_panel_2period(river_grid_year_panel_unfilled, 1, 3)
+panel_2period_g23  <- aggregate_panel_2period(river_grid_year_panel_unfilled, 2, 3)
+panel_2period_g123 <- aggregate_panel_2period(river_grid_year_panel_unfilled, 1, 2, 3)
 
 write_dta(panel_2period_g1  , file.path(path_data_clean_treatment, "grid_panel_2period_g1.dta"))
 write_dta(panel_2period_g2  , file.path(path_data_clean_treatment, "grid_panel_2period_g2.dta"))

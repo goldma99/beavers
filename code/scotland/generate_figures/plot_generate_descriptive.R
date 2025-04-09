@@ -60,7 +60,7 @@ nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  filter(str_detect(filename, "treatment_periods.pdf")) %>% 
+  filter(str_detect(filename, "beaver_territory_change.pdf")) %>% 
   #slice(7) %>%
   pwalk(ggsave_wrapper)
 

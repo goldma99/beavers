@@ -81,6 +81,7 @@ path_data_clean_lc         <- file.path(path_data_clean, "land_cover")
 path_data_clean_soil       <- file.path(path_data_clean, "soil")
 path_data_clean_weather    <- file.path(path_data_clean, "weather")
 path_data_clean_treatment  <- file.path(path_data_clean, "treatment")
+path_data_clean_geography  <- file.path(path_data_clean, "geography")
 
 path_data_est <- file.path(path, "data", "estimates")
 

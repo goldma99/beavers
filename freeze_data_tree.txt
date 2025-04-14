@@ -21,4 +21,5 @@
 {path}/data/data_clean/soil/soil_lca
 {path}/data/data_clean/treatment
 {path}/data/data_clean/weather
+{path}/data/data_clean/weather/era5_grid
 {path}/data/estimates

@@ -17,7 +17,7 @@ set maxvar 32767
 set scheme s1mono
 set mem 70m
 
-confirmdir "D:/Dropbox/Research"
+confirmdir "D:/Dropbox/Research/beavers"
 if r(confirmdir) == "0" {
   local rootDir = "D:/Dropbox/Research/"
 }

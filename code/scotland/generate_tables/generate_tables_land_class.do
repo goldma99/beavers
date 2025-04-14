@@ -78,6 +78,8 @@ foreach dep_var in $dep_vars {
 	foreach sample_cohort in $samples_cohort {
 		foreach sample_soil in $samples_soil {
 
+            est clear
+
 			foreach sample_river in $samples_river {
 				foreach control_set in $control_sets {
 
@@ -138,7 +140,7 @@ foreach dep_var in $dep_vars {
                 drop(`drop_vars')
                 starlevels(* 0.10 ** 0.05 *** 0.01)
                 prehead(/*\textbf{`panel_title'} \\\midrule*/)
-                posthead(\midrule)
+                posthead(& (1) & (2) & (3) & (4) & (5) & (6) \\ \midrule)
                 prefoot() 
                 postfoot(\noalign{\smallskip})
                 replace;
@@ -205,11 +207,11 @@ foreach dep_var in $dep_vars {
 
             texdoc init "$path_tab_beaver_land_class/`filename_table'", replace force
 
-            tex \begin{table}[htb]
+            tex \begin{table}[H]
             tex \captionlistentry[table]{}
             tex \label{table:beaver_land_class_DV`dep_var'_SC`sample_cohort'_SS`sample_soil'} 
-            tex \centering             
-            tex Table \ref{table:beaver_land_class_DV`dep_var'_SC`sample_cohort'_SS`sample_soil'} \\ 
+            tex \scriptsize %\centering             
+            tex %Table \ref{table:beaver_land_class_DV`dep_var'_SC`sample_cohort'_SS`sample_soil'} \\ 
             tex Dep Var: `dep_var_title', Treatment Cohorts: `cohort_title', Soil: `soil_title' \\
             tex \begin{threeparttable} 
             tex \begin{tabulary}{\textwidth}{l*{7}{c}@{}} 
@@ -220,16 +222,16 @@ foreach dep_var in $dep_vars {
             tex \midrule \bottomrule 
             tex \end{tabulary}             
             tex \medskip             
-            tex \begin{tablenotes}[flushleft]             
-            tex \setlength\labelsep{0pt}             
-            tex \item             
-            tex \footnotesize 
-            tex \justify 
-            tex Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}. 
-            tex Each regression includes `fe_note'. 
-            tex Standard errors are clustered at the `cl_note' level.  \\
-            tex \mbox{*} 0.10 ** 0.05 *** 0.01
-            tex \end{tablenotes}             
+            tex %\begin{tablenotes}[flushleft]             
+            tex %\setlength\labelsep{0pt}             
+            tex %\item             
+            tex %\footnotesize 
+            tex %\justify 
+            tex %Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}. 
+            tex %Each regression includes `fe_note'. 
+            tex %Standard errors are clustered at the `cl_note' level.  \\
+            tex %\mbox{*} 0.10 ** 0.05 *** 0.01
+            tex %\end{tablenotes}             
             tex \end{threeparttable}                 
             tex \end{table}
 
@@ -238,99 +240,3 @@ foreach dep_var in $dep_vars {
 		}
 	}
 }
-??
-/*
-***********************************************************************
-// 2. Table with only ag-share outcome, with all samples -----------------------
-********************************************************************************
-
-est clear
-local control_set weather_controls
-local sample_soil all_soil 
-local cl river_id
-local indep_var beaver_d
-local fe twfe
-
-local dep_vars is_land_class_1 is_land_class_3
-
-foreach dep_var in `dep_vars' {
-
-    ** Read in regressions 
-    foreach sample_cohort in $samples_cohort {
-        foreach sample_river in $samples_river {
-            est use $path_data_est/est_beaver_DV`dep_var'_TV`indep_var'_S`sample_cohort'_`sample_river'_`sample_soil'_C`control_set'_FE`fe'_CL`cl'.ster
-            est sto C`sample_cohort'_R`sample_river'
-        }
-    }
-
-    ** Build table
-    local filename_panel "beaver_main_DV`dep_var'_Sall_samples_panel"
-    local filename_table "beaver_main_DV`dep_var'_Sall_samples_table"
-
-    #delim ;
-    estout C*_R* using "$path_tab_beaver_main/`filename_panel'.tex",
-        cells(b(star fmt(3)) se(par fmt(3)))
-        label 
-        style(tex)
-        stats(N r2_within ymean,
-              fmt(%9.0fc 3 3) 
-              labels("\midrule Observations" "Within \(R^2\)" "Mean Dep. Var."))
-        mgroups("All Treated Cohorts" "2012 and 2017 Cohorts" "2012 Cohort",
-                pattern(1 0 1 0 1 0)
-                span 
-                prefix(\multicolumn{@span}{c}{) 
-                suffix(})
-                erepeat(\cmidrule(lr){@span}))
-        mlabels("All cells" "River cells" "All cells" "River cells" "All cells" "River cells")
-        collabels(none)
-        varlabels(beaver_d "Beaver Presence")
-        drop(_cons tp_mean t2m_mean)
-        starlevels(* 0.10 ** 0.05 *** 0.01)
-        prehead()
-        posthead(   & (1) & (2) & (3) & (4) & (5) & (6)\\ \midrule)
-        prefoot() 
-        postfoot(\noalign{\smallskip})
-        replace;
-    #delim cr
-        
-        local fe_note "grid cell and time period fixed effects."
-        local sample_note "Samples vary by column."
-        local cl_note "grid cell"
-        local control_note "Regression includes average two-meter temperature and average total precipitation covariates"
-
-        texdoc init "$path_tab_beaver_main/`filename_table'.tex", replace force
-
-        tex \begin{table}[htb]
-        tex \captionlistentry[table]{}
-        tex \label{table:beaver_main_`dep_var'_all_samples} 
-        tex \centering             
-        tex Table \ref{table:beaver_main_`dep_var'_all_samples} \\ 
-        tex Beaver impacts \\
-        tex \begin{threeparttable} 
-        tex \begin{tabulary}{\textwidth}{l*{7}{c}@{}} 
-        tex \toprule \toprule
-        tex \noalign{\smallskip}
-        tex \ExpandableInput{\tabPath/beaver_main/`filename_panel'.tex}
-        tex \noalign{\smallskip} 
-        tex \midrule \bottomrule 
-        tex \end{tabulary}             
-        tex \medskip             
-        tex \begin{tablenotes}[flushleft]             
-        tex \setlength\labelsep{0pt}             
-        tex \item             
-        tex \footnotesize 
-        tex \justify 
-        tex Notes: Estimation results from Equation \eqref{eq:main_beaver_eq}. 
-        tex Each regression includes `fe_note' 
-        tex `sample_note' `control_note'.
-        tex Standard errors are clustered at the `cl_note' level.  \\
-        tex \mbox{*} 0.10 ** 0.05 *** 0.01
-        tex \end{tablenotes}             
-        tex \end{threeparttable}                 
-        tex \end{table}
-
-        texdoc close
-}
-
-
-*/

@@ -16,6 +16,34 @@ READ_DATA <- FALSE
 
 if (READ_DATA) {
   
+  ## Scotland =======================
+  scotland_sf <-
+    path_data_clean_geography %>% 
+    file.path("nuts_scotland", "nuts_scotland.shp") %>% 
+    read_sf()
+  
+  ## Landscape grid =======================
+  river_grid_sf <-
+    path_data_clean_river %>%
+    file.path("river_grid", "river_grid.shp") %>%
+    read_sf()
+  
+  ## ERA5 grid ==================================
+  era5_grid_sf <-
+    path_data_clean_weather %>% 
+    file.path("era5_grid", "era5_grid.shp") %>% 
+    read_sf()
+  
+  ## Hydrometry station locations ============================
+  hydrometry_metadata_sf <-
+    path_data_hydrometry %>%
+    file.path("survey_stations_ts_metadata.csv") %>%
+    read_csv() %>% 
+    st_as_sf(
+      coords = c("station_longitude", "station_latitude"),
+      crs = 4326
+    )
+  
   ## Animals translocations ========================================
   animal_transloc_raw <- 
     path_data_clean |>
@@ -53,14 +81,16 @@ beavers_fig_args <-
     plot_transloc_animal, "plot_transloc_animal.pdf", path_output_figures, 12, 7,
     plot_transloc_plant , "plot_transloc_plant.pdf" , path_output_figures, 12, 7,
     plot_beaver_territory_change, "beaver_territory_change.pdf", path_output_figures, 12, 7,
-    plot_treatment_periods, "treatment_periods.pdf", path_output_figures, 11, 2.5
+    plot_treatment_periods, "treatment_periods.pdf", path_output_figures, 11, 2.5,
+    plot_hydrometry_stations_sample, "hydrometry_stations_sample.pdf", path_output_figures, 12, 7,
+    plot_era5_grid, "era5_grid.pdf", path_output_figures, 12, 7
   ) 
 
 nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  filter(str_detect(filename, "beaver_territory_change.pdf")) %>% 
+  filter(str_detect(filename, "era5_grid.pdf")) %>% 
   #slice(7) %>%
   pwalk(ggsave_wrapper)
 

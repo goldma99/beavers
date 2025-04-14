@@ -22,6 +22,13 @@ if (READ_DATA) {
     dir_ls(glob = "*is_land_class_1_*.csv") %>% 
     purrr::set_names(basename) %>%
     future_map_dfr(read_csv, .id = "model")
+  
+  
+  est_res_lc9 <-
+    path_data_est %>%  
+    dir_ls(glob = "*is_land_class_9_*.csv") %>% 
+    purrr::set_names(basename) %>%
+    future_map_dfr(read_csv, .id = "model")
 }
 
 # Plot generation ========================================

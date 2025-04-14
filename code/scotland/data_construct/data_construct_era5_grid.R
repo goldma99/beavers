@@ -65,7 +65,6 @@ era5_grid <-
 
 # Analysis ========================================
 
-# Output ==========================================
 river_era5_weights <-
   river_grid %>%
   mutate(river_cell_area = st_area(.)) %>%
@@ -97,7 +96,14 @@ river_weather_panel <-
                      by = .(river_id, year)
   ]
 
+# Output ==========================================
+
 river_weather_panel %>%
   write_parquet(
     file.path(path_data_clean_weather, "river_grid_weather_panel.pqt")
+  )
+
+era5_grid %>% 
+  write_sf(
+    file.path(path_data_clean_weather, "era5_grid", "era5_grid.shp")
   )

@@ -39,8 +39,14 @@ if (READ_DATA) {
   ## LCM aggregated to river grid cells
   river_ag_share_y2022 <-
     path_data_clean_lc %>% 
-    file.path("river_ag_share", "river_ag_share_y2022.pqt") %>%
+    file.path("ZZZ_river_ag_share", "river_ag_share_y2022.pqt") %>%
     read_parquet()
+  
+  lcm_class_crosswalk <- 
+    path_data_clean_lc %>% 
+    file.path("agg_class_crosswalk", "agg_class_crosswalk.csv") %>% 
+    read_csv() %>% 
+    setDT()
   
   ## Soil capability classes
   soil_lca_sf <-
@@ -115,7 +121,7 @@ nrow(beavers_fig_args)
 
 ## Generate and save plots 
 beavers_fig_args %>%
-  filter(str_detect(filename, "outcome_pretrends.png")) %>% 
+  filter(str_detect(filename, "study_area.pdf")) %>% 
     #slice(7) %>%
     pwalk(ggsave_wrapper)
 

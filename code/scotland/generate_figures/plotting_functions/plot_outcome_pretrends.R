@@ -29,7 +29,8 @@ plot_outcome_pretrends <- function() {
         ),
       plot_group = paste0(g, ":", g_pre_post)
       ) %>%
-      filter(!is.na(g_pre_post)) %>% 
+      filter(!is.na(g_pre_post),
+             g_pre_post != "post") %>% 
     
     #slice_sample(n = 1000) %>%
     
